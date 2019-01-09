@@ -4,8 +4,8 @@ import java.lang.Math;
 
 public class MathFunctions {
 
-    private static double pi = 3.14159;
-    private static double e = 2.71828;
+    private static double pi = Math.PI;
+    private static double e = Math.E;
 
     public static double NormalDistPDF(double x, double mu, double sigma2) {
         double eExponent = -Math.pow(x - mu, 2) / (2 * sigma2);
