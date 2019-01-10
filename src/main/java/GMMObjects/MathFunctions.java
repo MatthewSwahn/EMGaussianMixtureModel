@@ -1,6 +1,7 @@
-package GMMMath;
+package GMMObjects;
 
 import java.lang.Math;
+import java.util.List;
 
 public class MathFunctions {
 
@@ -14,5 +15,15 @@ public class MathFunctions {
 
     public static double NormalDistPDF(double x) {
         return NormalDistPDF(x, 0, 1);
+    }
+
+    public static double ProbabilitySum(List<probability> w) {
+        double sum = 0;
+
+        for (probability p :
+                w) {
+            sum += p.getProb();
+        }
+        return sum;
     }
 }

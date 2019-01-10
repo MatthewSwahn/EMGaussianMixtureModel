@@ -1,4 +1,4 @@
-package GMMMath;
+package GMMObjects;
 
 public class ProbabilityExeption extends Exception {
     private double p;

@@ -1,5 +1,6 @@
-package GMMMath;
+package GMMObjects;
 
+//Simple probablility class, created mainly for the exceptions
 public class probability {
     private double p;
 
@@ -9,5 +10,13 @@ public class probability {
         } else {
             throw new ProbabilityExeption(p);
         }
+    }
+
+    public double getProb(){
+        return this.p;
+    }
+
+    public void setProb(double p){
+        this.p = p;
     }
 }
