@@ -31,10 +31,6 @@ public class GMMComponent {
         return this.weight;
     }
 
-    public int getArrayPosition() {
-        return this.arrayPosition;
-    }
-
     public double componentPDF(double x) {
         return NormalDistPDF(x, this.mean, this.variance);
     }

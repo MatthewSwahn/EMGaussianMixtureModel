@@ -1,9 +1,9 @@
 package GMMObjects;
 
-public class ProbabilityExeption extends Exception {
+public class ProbabilityException extends RuntimeException {
     private double p;
 
-    ProbabilityExeption(double p) {
+    ProbabilityException(double p) {
         this.p = p;
     }
 
