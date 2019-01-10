@@ -6,3 +6,4 @@ This is the Java implementation of the Expectation Maximization (EM) algorithm t
 2) Implement E step for 1 dimension GMM
 3) Implement M step for 1 dimension GMM
 4) tons of other stuff I'm probably forgetting for 1d GMM
+5) Eventually implement multidimensional GMM
