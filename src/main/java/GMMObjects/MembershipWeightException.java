@@ -5,9 +5,9 @@ import java.util.List;
 import static GMMObjects.MathFunctions.ProbabilitySum;
 
 public class MembershipWeightException extends Exception {
-    private List<probability> w;
+    private List<Double> w;
 
-    MembershipWeightException(List<probability> w){
+    MembershipWeightException(List<Double> w){
         this.w = w;
     }
 

@@ -19,12 +19,24 @@ public class GMMComponent {
         return this.position;
     }
 
+    public void setMean(double mean) {
+        this.mean = mean;
+    }
+
     public double getMean() {
         return this.mean;
     }
 
+    public void setVariance(double variance) {
+        this.variance = variance;
+    }
+
     public double getVariance() {
         return this.variance;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public double getWeight() {
@@ -36,6 +48,6 @@ public class GMMComponent {
     }
 
     public double componentPDFandProb(double x) {
-        return this.weight * NormalDistPDF(x, this.mean, this.variance);
+        return this.weight * componentPDF(x);
     }
 }

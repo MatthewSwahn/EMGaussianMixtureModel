@@ -1,6 +1,7 @@
 package GMMObjects;
 
 import java.lang.Math;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MathFunctions {
@@ -25,5 +26,13 @@ public class MathFunctions {
             sum += p;
         }
         return sum;
+    }
+    public static List<Double> sumList(ArrayList<Double> x, ArrayList<Double> y) {
+        assert x.size() == y.size();
+        List<Double> z = new ArrayList<>();
+        for (int i = 0; i < x.size(); i++) {
+            z.add(x.get(i) + y.get(i));
+        }
+        return z;
     }
 }
