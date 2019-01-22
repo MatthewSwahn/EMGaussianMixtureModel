@@ -3,9 +3,9 @@ package GMMObjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
+
+import static GMMObjects.MathFunctions.*;
 
 public class GMMEM {
     private List<Double> alphas;
@@ -29,7 +29,8 @@ public class GMMEM {
                 .mapToDouble(o -> o.componentPDFandProb(xi))
                 .sum();
 
-        List<Double> returnWeights = components.stream()
+        //this looks SO ugly
+        return components.stream()
                 .map(o -> o.componentPDFandProb(xi) / denominator)
                 .map(o -> {
                     if (o < 0 || o > 1) {
@@ -39,8 +40,6 @@ public class GMMEM {
                     }
                 })
                 .collect(Collectors.toList());
-
-        return returnWeights;
     }
 
     private List<List<Double>> EStep(List<Double> x, List<GMMComponent> components) {
@@ -48,16 +47,31 @@ public class GMMEM {
                 .collect(Collectors.toList());
     }
 
-    private List<GMMComponent> MStep(List<Double> x, List<List<Double>> wik, List<GMMComponent> components) {
-        List<Double> Nk = new ArrayList<Double>(new double[components.size()]); // how do I initialize a list of all 0.0s?
+    private List<GMMComponent> MStep(List<Double> x, List<List<Double>> wkList, List<GMMComponent> components) {
+        int K = components.size();
+        List<Double> NkList = new ArrayList<>(Collections.nCopies(K, 0.0));
         int N = x.size();
+
+        /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
+        collection, NkList (defined above)*/
         for (List<Double> wix :
-                wik) {
+                wkList) {
             for (int i = 0; i <= wix.size(); i++) {
-                Nk.add(wik.get(i));  // This is wrong, we should be adding the values to the list of 0s
+                NkList = sumList(NkList, wix);
             }
         }
 
+        // Calculate component probabilities (Alphas)
+        List<Double> alphakList = divisionScalar(NkList, N);
+
+        /* Calculate component means (Mus) = 1/Nk * sum{from i=1 to N) (wkList * xi)
+        this is annoying, remember that wkList is a list of lists*/
+        List<Double> insideSum = new ArrayList<>(Collections.nCopies(K, 0.0));
+        for (int i = 0; i < N; i++) {
+            insideSum = sumList(insideSum, multiplicationScalar(wkList.get(i), x.get(i)));
+            //side note, we use this strategy forNkList and insideSum, can we make this a function?
+        }
+        List<Double> mukList = divisionByElement(insideSum, NkList);
     }
 
     public List<GMMComponent> EMStep(List<Double> x, int numOfComponents, int maxNumberIterations) {
