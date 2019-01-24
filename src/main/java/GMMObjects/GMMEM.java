@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 import static GMMObjects.MathFunctions.*;
 
@@ -49,29 +50,45 @@ public class GMMEM {
 
     private List<GMMComponent> MStep(List<Double> x, List<List<Double>> wkList, List<GMMComponent> components) {
         int K = components.size();
-        List<Double> NkList = new ArrayList<>(Collections.nCopies(K, 0.0));
         int N = x.size();
 
         /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
         collection, NkList (defined above)*/
-        for (List<Double> wix :
-                wkList) {
-            for (int i = 0; i <= wix.size(); i++) {
-                NkList = sumList(NkList, wix);
-            }
-        }
+        List<Double> NkList = columnSum(wkList);
 
         // Calculate component probabilities (Alphas)
         List<Double> alphakList = divisionScalar(NkList, N);
 
         /* Calculate component means (Mus) = 1/Nk * sum{from i=1 to N) (wkList * xi)
         this is annoying, remember that wkList is a list of lists*/
-        List<Double> insideSum = new ArrayList<>(Collections.nCopies(K, 0.0));
+        // can we do a strategy pattern with columnSum and how we get insideSum?
+        // my functions are all static and can't inherit shit
+        List<Double> insideSumMu = columnSum(wkList);
+        new ArrayList<>(Collections.nCopies(K, 0.0));
         for (int i = 0; i < N; i++) {
-            insideSum = sumList(insideSum, multiplicationScalar(wkList.get(i), x.get(i)));
-            //side note, we use this strategy forNkList and insideSum, can we make this a function?
+            insideSumMu = sumList(insideSumMu, multiplicationScalar(wkList.get(i), x.get(i)));
+            //side note, we use this strategy forNkList and insideSumMu, can we make this a function?
         }
-        List<Double> mukList = divisionByElement(insideSum, NkList);
+        List<Double> mukList = divisionByElement(insideSumMu, NkList);
+
+        // SigmaK list, later this is a list of matrices.
+        // There's DEFINITELY a better way to write this
+        // in paper I'm referencing, it looks like they iterate through N records K times, which seems wasteful.
+        List<Double> insideSumSigma = new ArrayList<>(Collections.nCopies(K, 0.0));
+        for (int j = 0; j < K; j++) {
+            double insideSumVal = 0.0;
+            for (int i = 0; i < N; i++) {
+                insideSumVal += wkList.get(i).get(j) * Math.pow(x.get(i) - mukList.get(j), 2);
+            }
+            insideSumSigma.add(insideSumVal);
+        }
+        List<Double> sigmakList = divisionByElement(insideSumSigma, NkList);
+
+        List<GMMComponent> results = new ArrayList<>();
+        for (int i = 0; i < K; i++) {
+            results.add(new GMMComponent(i, mukList.get(i), sigmakList.get(i), alphakList.get(i)));
+        }
+        return results;
     }
 
     public List<GMMComponent> EMStep(List<Double> x, int numOfComponents, int maxNumberIterations) {

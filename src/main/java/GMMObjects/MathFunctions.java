@@ -2,6 +2,7 @@ package GMMObjects;
 
 import java.lang.Math;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MathFunctions {
@@ -40,44 +41,53 @@ public class MathFunctions {
     static List<Double> multiplicationScalar(List<Double> X, double j) {
         List<Double> results = new ArrayList<>();
         int length = X.size();
-        for (double xi:
-             X) {
+        for (double xi :
+                X) {
             results.add(xi * j);
         }
 
         return results;
     }
 
-    static List<Double> divisionScalar(List<Double> X, double j){
-        if (j == 0.0){
+    static List<Double> divisionScalar(List<Double> X, double j) {
+        if (j == 0.0) {
             throw new ArithmeticException("divisionScalar failed, scalar cannot be 0.0");
         } else {
-            return multiplicationScalar(X,1/j);
+            return multiplicationScalar(X, 1 / j);
         }
     }
 
-    static List<Double> multiplicationByElement(List<Double> X, List<Double> Y){
+    static List<Double> multiplicationByElement(List<Double> X, List<Double> Y) {
         assert X.size() == Y.size();
         int length = X.size();
         List<Double> results = new ArrayList<>();
-        for(int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
             results.add(X.get(i) * Y.get(i));
         }
         return results;
     }
 
-    static List<Double> divisionByElement(List<Double> numerator, List<Double> denominator){
+    static List<Double> divisionByElement(List<Double> numerator, List<Double> denominator) {
         assert numerator.size() == denominator.size();
-        if(denominator.contains(0.0)){
+        if (denominator.contains(0.0)) {
             throw new ArithmeticException();
-        }
-        else{
+        } else {
             List<Double> results = new ArrayList<>();
             int length = numerator.size();
-            for(int i = 0; i < length; i++){
-                results.add(numerator.get(i)/denominator.get(i));
+            for (int i = 0; i < length; i++) {
+                results.add(numerator.get(i) / denominator.get(i));
             }
             return results;
         }
+    }
+
+    //idea is that we have a list of lists (inner list is like a row), and we sum over all columns.
+    static List<Double> columnSum(List<List<Double>> input){
+        List<Double> results = new ArrayList<>(Collections.nCopies(input.get(0).size(), 0.0));
+        for (List<Double> i :
+                input) {
+                results = sumList(results, i);
+        }
+        return results;
     }
 }
