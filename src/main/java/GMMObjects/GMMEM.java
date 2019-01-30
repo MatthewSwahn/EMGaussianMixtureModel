@@ -48,8 +48,8 @@ public class GMMEM {
                 .collect(Collectors.toList());
     }
 
-    private List<GMMComponent> MStep(List<Double> x, List<List<Double>> wkList, List<GMMComponent> components) {
-        int K = components.size();
+    private List<GMMComponent> MStep(List<Double> x, List<List<Double>> wkList) {
+        int K = wkList.size();
         int N = x.size();
 
         /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
@@ -91,7 +91,45 @@ public class GMMEM {
         return results;
     }
 
-    public List<GMMComponent> EMStep(List<Double> x, int numOfComponents, int maxNumberIterations) {
+    private double GMMLogLikelihood(List<Double> x, List<GMMComponent> components) {
+        double logLikelihoodSum = 0.0;
+        for (Double xi:
+             x) {
+            double componentPDFSum = 0.0;
+            for (GMMComponent comp:
+                 components) {
+                componentPDFSum +=comp.componentPDFandProb(xi);
+            }
+            logLikelihoodSum += Math.log(componentPDFSum);
+        }
+        return logLikelihoodSum;
+    }
 
+    public List<GMMComponent> EMStep(List<Double> x,
+                                     int numOfComponents,
+                                     List<Double> estimatedCompCenters,
+                                     int maxNumberIterations,
+                                     double logLikelihoodThreshold) {
+
+        assert estimatedCompCenters.size() == numOfComponents; // error out here if unequal
+
+        // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
+        List<List<Double>> EStepVals = new ArrayList<>();
+        for (Double xi :
+                x) {
+            EStepVals.add(distToCenterL1(xi, estimatedCompCenters));
+        }
+
+        List<GMMComponent> MStepVals = MStep(x, EStepVals);
+
+        for (int k = 0; k < maxNumberIterations; k++) {
+            EStepVals = EStep(x, MStepVals);
+            MStepVals = MStep(x, EStepVals);
+            double logLikelihood = GMMLogLikelihood(x, MStepVals);
+            if (logLikelihood < logLikelihoodThreshold) {
+                return MStepVals;
+            }
+        }
+        System.out.println("After " + maxNumberIterations + " iterations there was no convergence.");
     }
 }
