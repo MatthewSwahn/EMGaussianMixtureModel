@@ -93,12 +93,12 @@ public class GMMEM {
 
     private double GMMLogLikelihood(List<Double> x, List<GMMComponent> components) {
         double logLikelihoodSum = 0.0;
-        for (Double xi:
-             x) {
+        for (Double xi :
+                x) {
             double componentPDFSum = 0.0;
-            for (GMMComponent comp:
-                 components) {
-                componentPDFSum +=comp.componentPDFandProb(xi);
+            for (GMMComponent comp :
+                    components) {
+                componentPDFSum += comp.componentPDFandProb(xi);
             }
             logLikelihoodSum += Math.log(componentPDFSum);
         }
@@ -109,7 +109,7 @@ public class GMMEM {
                                      int numOfComponents,
                                      List<Double> estimatedCompCenters,
                                      int maxNumberIterations,
-                                     double logLikelihoodThreshold) {
+                                     double deltaLogLikelihoodThreshold) {
 
         assert estimatedCompCenters.size() == numOfComponents; // error out here if unequal
 
@@ -121,15 +121,25 @@ public class GMMEM {
         }
 
         List<GMMComponent> MStepVals = MStep(x, EStepVals);
+        double prevLogLikelihood = GMMLogLikelihood(x, MStepVals);
 
         for (int k = 0; k < maxNumberIterations; k++) {
             EStepVals = EStep(x, MStepVals);
             MStepVals = MStep(x, EStepVals);
-            double logLikelihood = GMMLogLikelihood(x, MStepVals);
-            if (logLikelihood < logLikelihoodThreshold) {
+            double currentLogLikelihood = GMMLogLikelihood(x, MStepVals);
+            double deltaLogLikelihood = currentLogLikelihood - prevLogLikelihood;
+            if (deltaLogLikelihood < deltaLogLikelihoodThreshold) {
                 return MStepVals;
             }
+            prevLogLikelihood = currentLogLikelihood;
         }
         System.out.println("After " + maxNumberIterations + " iterations there was no convergence.");
+    }
+
+    public List<GMMComponent> EMStep(List<Double> x,
+                                     int numOfComponents,
+                                     List<Double> estimatedCompCenters,
+                                     double deltaLogLikelihoodThreshold){
+        return EMStep(x, numOfComponents, estimatedCompCenters, 500, deltaLogLikelihoodThreshold);
     }
 }
