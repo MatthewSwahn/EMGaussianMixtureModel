@@ -82,12 +82,30 @@ public class MathFunctions {
     }
 
     //idea is that we have a list of lists (inner list is like a row), and we sum over all columns.
-    static List<Double> columnSum(List<List<Double>> input){
+    static List<Double> columnSum(List<List<Double>> input) {
         List<Double> results = new ArrayList<>(Collections.nCopies(input.get(0).size(), 0.0));
         for (List<Double> i :
                 input) {
-                results = sumList(results, i);
+            results = sumList(results, i);
         }
         return results;
+    }
+
+    static List<Double> L1Norm(List<Double> inVector) {
+        double sum = 0.0;
+        for (Double vi :
+                inVector) {
+            sum += Math.abs(vi);
+        }
+        return divisionScalar(inVector, sum);
+    }
+
+    static List<Double> distToCenterL1(double x, List<Double> centers){
+        List<Double> results = new ArrayList<>();
+        for (double ci:
+             centers) {
+            results.add(Math.abs(x - ci));
+        }
+        return L1Norm(results);
     }
 }
