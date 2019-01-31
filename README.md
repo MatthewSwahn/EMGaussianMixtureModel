@@ -1,7 +1,15 @@
 # EMGaussianMixtureModel
 This is the Java implementation of the Expectation Maximization (EM) algorithm to fit maximum likelihood parameters for a Gaussian Mixture Model.
 
+## Main classes:
+1) GMMComponent - this class represents a single component. Each GMMComponent has a position, mean, variance, and weight. So far the only useful public method here is componentPDFandProb, which returns a componenet pdf value (weight * N(mean, variance).
+
+2) MathFunctions - has a ton of static functions that the rest of the program uses. There's some linear algebra stuff like vector addtion (method name: sumList), scalar multiplication with vectors (method name: multiplicationScalar). Also has some non-linear algebra stuff to make code look cleaner. Example of a non-linear algebra is the method divisionByElement takes 2 lists and goes element by element and divides one lists by another. IE, divisionByElement([1, 2, 3], [6, 3, 8]) returns [1/6, 2/3, 3/8].
+
+3) GMMEM - this class actually does the EM algorithm to produce the mean, variance, and weights for K components. Input is the data (as of 1/31/19, 1 dimensional data), the number of components, and the estimated center for each component. It's fine if the component centers aren't accurate, but better estimations would yield faster convergence. Reccomened to set the centers as the centroids of a k-means algorithm, where k is both the number of k-means clusters and number of componenets.
+
 # TODO
 1) Testing for everything
 2) Allow CSV input for data
-3) Eventually implement multidimensional GMM
+3) Consider creating GMM class (collection of GMMComponents)
+4) Eventually implement multidimensional GMM
