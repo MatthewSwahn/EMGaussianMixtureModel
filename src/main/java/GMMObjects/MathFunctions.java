@@ -100,10 +100,10 @@ public class MathFunctions {
         return divisionScalar(inVector, sum);
     }
 
-    static List<Double> distToCenterL1(double x, List<Double> centers){
+    static List<Double> distToCenterL1(double x, List<Double> centers) {
         List<Double> results = new ArrayList<>();
-        for (double ci:
-             centers) {
+        for (double ci :
+                centers) {
             results.add(Math.abs(x - ci));
         }
         return L1Norm(results);
