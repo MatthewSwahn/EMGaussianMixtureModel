@@ -1,6 +1,6 @@
 package GMMObjects;
 
-import static GMMObjects.MathFunctions.NormalDistPDF;
+import static FuncsAndUtils.MathFunctions.NormalDistPDF;
 
 public class GMMComponent {
     private int position;

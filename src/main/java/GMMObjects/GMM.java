@@ -4,10 +4,8 @@ import org.apache.commons.math3.exception.ConvergenceException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import static GMMObjects.MathFunctions.*;
+import static FuncsAndUtils.MathFunctions.*;
 
 public class GMM {
     public ArrayList<GMMComponent> components;

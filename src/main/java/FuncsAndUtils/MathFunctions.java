@@ -1,4 +1,4 @@
-package GMMObjects;
+package FuncsAndUtils;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ public class MathFunctions {
     private static final double pi = Math.PI;
     private static final double e = Math.E;
 
-    static double NormalDistPDF(double x, double mu, double sigma2) {
+    public static double NormalDistPDF(double x, double mu, double sigma2) {
         double eExponent = -Math.pow(x - mu, 2) / (2 * sigma2);
         return (1 / Math.sqrt(2 * pi * sigma2)) * Math.pow(e, eExponent);
     }
@@ -19,7 +19,7 @@ public class MathFunctions {
         return NormalDistPDF(x, 0, 1);
     }
 
-    static double ProbabilitySum(List<Double> w) {
+    public static double ProbabilitySum(List<Double> w) {
         double sum = 0;
 
         for (Double p :
@@ -29,7 +29,7 @@ public class MathFunctions {
         return sum;
     }
 
-    static ArrayList<Double> sumList(ArrayList<Double> X, ArrayList<Double> Y) {
+    public static ArrayList<Double> sumList(ArrayList<Double> X, ArrayList<Double> Y) {
         assert X.size() == Y.size();
         ArrayList<Double> results = new ArrayList<>();
         for (int i = 0; i < X.size(); i++) {
@@ -38,7 +38,7 @@ public class MathFunctions {
         return results;
     }
 
-    static ArrayList<Double> multiplicationScalar(ArrayList<Double> X, double j) {
+    public static ArrayList<Double> multiplicationScalar(ArrayList<Double> X, double j) {
         ArrayList<Double> results = new ArrayList<>();
         for (double xi :
                 X) {
@@ -48,7 +48,7 @@ public class MathFunctions {
         return results;
     }
 
-    static ArrayList<Double> divisionScalar(ArrayList<Double> X, double j) {
+    public static ArrayList<Double> divisionScalar(ArrayList<Double> X, double j) {
         if (j == 0.0) {
             throw new ArithmeticException("divisionScalar failed, scalar cannot be 0.0");
         } else {
@@ -66,7 +66,7 @@ public class MathFunctions {
         return results;
     }
 
-    static ArrayList<Double> divisionByElement(ArrayList<Double> numerator, ArrayList<Double> denominator) {
+    public static ArrayList<Double> divisionByElement(ArrayList<Double> numerator, ArrayList<Double> denominator) {
         assert numerator.size() == denominator.size();
         if (denominator.contains(0.0)) {
             throw new ArithmeticException();
@@ -81,7 +81,7 @@ public class MathFunctions {
     }
 
     //idea is that we have a list of lists (inner list is like a row), and we sum over all columns.
-    static ArrayList<Double> columnSum(ArrayList<ArrayList<Double>> input) {
+    public static ArrayList<Double> columnSum(ArrayList<ArrayList<Double>> input) {
         ArrayList<Double> results = new ArrayList<>(Collections.nCopies(input.get(0).size(), 0.0));
         for (ArrayList<Double> i :
                 input) {
@@ -90,7 +90,7 @@ public class MathFunctions {
         return results;
     }
 
-    static ArrayList<Double> L1Norm(ArrayList<Double> inVector) {
+    public static ArrayList<Double> L1Norm(ArrayList<Double> inVector) {
         double sum = 0.0;
         for (Double vi :
                 inVector) {
@@ -99,7 +99,7 @@ public class MathFunctions {
         return divisionScalar(inVector, sum);
     }
 
-    static ArrayList<Double> distToCenterL1(double x, ArrayList<Double> centers) {
+    public static ArrayList<Double> distToCenterL1(double x, ArrayList<Double> centers) {
         ArrayList<Double> results = new ArrayList<>();
         for (double ci :
                 centers) {

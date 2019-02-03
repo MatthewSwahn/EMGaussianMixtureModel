@@ -1,4 +1,6 @@
-package GMMObjects;
+package FuncsAndUtils;
+
+import GMMObjects.GMM;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
