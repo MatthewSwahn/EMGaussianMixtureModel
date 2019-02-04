@@ -15,9 +15,9 @@ public class ImportUtils {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             if (hasHeader) {
                 reader.readLine(); //if hasHeader skip the first line
-                while ((line = reader.readLine()) != null) {
-                    inputData.add(Double.parseDouble(line));
-                }
+            }
+            while ((line = reader.readLine()) != null) {
+                inputData.add(Double.parseDouble(line));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -29,7 +29,7 @@ public class ImportUtils {
                                  boolean hasHeader,
                                  ArrayList<Double> estimatedCompCenters,
                                  int maxIterations,
-                                 double convergenceCriteria){
+                                 double convergenceCriteria) {
         ArrayList<Double> x = DoubleListFromCSV(filepath, hasHeader);
 
         return new GMM(x, estimatedCompCenters, maxIterations, convergenceCriteria);
