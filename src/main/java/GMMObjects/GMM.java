@@ -3,7 +3,6 @@ package GMMObjects;
 import org.apache.commons.math3.exception.ConvergenceException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static FuncsAndUtils.MathFunctions.*;
 
@@ -22,6 +21,18 @@ public class GMM {
 
     public ArrayList<GMMComponent> getComponents() {
         return components;
+    }
+
+    public ArrayList<ArrayList<Double>> getComponentValues() {
+        ArrayList<ArrayList<Double>> values = new ArrayList<>();
+        for (int i = 0; i < components.size(); i++) {
+            ArrayList<Double> inner = new ArrayList<>();
+            inner.add(components.get(i).getWeight());
+            inner.add(components.get(i).getMean());
+            inner.add(components.get(i).getSD());
+            values.add(inner);
+        }
+        return values;
     }
 
     /*Computes the E step for a single datum.
@@ -43,7 +54,7 @@ public class GMM {
 
         for (int i = 0; i < wkList.size(); i++) {
             wkList.set(i, wkList.get(i) / denominator);
-            if(wkList.get(i) < 0 || wkList.get(i) > 1 ){
+            if (wkList.get(i) < 0 || wkList.get(i) > 1) {
                 throw new ProbabilityException(wkList.get(i));
             }
         }
@@ -51,16 +62,16 @@ public class GMM {
     }
 
     private ArrayList<ArrayList<Double>> EStep(ArrayList<Double> x, ArrayList<GMMComponent> components) {
-        ArrayList<ArrayList<Double>> results = null;
-        for (Double xi:
-             x) {
-            results.add(EStepDatum(xi,components));
+        ArrayList<ArrayList<Double>> results = new ArrayList<>();
+        for (Double xi :
+                x) {
+            results.add(EStepDatum(xi, components));
         }
         return results;
     }
 
     private ArrayList<GMMComponent> MStep(ArrayList<Double> x, ArrayList<ArrayList<Double>> wkList) {
-        int K = wkList.size();
+        int K = wkList.get(0).size();
         int N = x.size();
 
         /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
@@ -75,7 +86,6 @@ public class GMM {
         // can we do a strategy pattern with columnSum and how we get insideSum?
         // my functions are all static and can't inherit shit
         ArrayList<Double> insideSumMu = columnSum(wkList);
-        new ArrayList<>(Collections.nCopies(K, 0.0));
         for (int i = 0; i < N; i++) {
             insideSumMu = sumList(insideSumMu, multiplicationScalar(wkList.get(i), x.get(i)));
             //side note, we use this strategy forNkList and insideSumMu, can we make this a function?
@@ -85,7 +95,7 @@ public class GMM {
         // SigmaK list, later this is a list of matrices.
         // There's DEFINITELY a better way to write this
         // in paper I'm referencing, it looks like they iterate through N records K times, which seems wasteful.
-        ArrayList<Double> insideSumSigma = new ArrayList<>(Collections.nCopies(K, 0.0));
+        ArrayList<Double> insideSumSigma = new ArrayList<>();
         for (int j = 0; j < K; j++) {
             double insideSumVal = 0.0;
             for (int i = 0; i < N; i++) {
@@ -94,7 +104,6 @@ public class GMM {
             insideSumSigma.add(insideSumVal);
         }
         ArrayList<Double> sigmakList = divisionByElement(insideSumSigma, NkList);
-
         ArrayList<GMMComponent> results = new ArrayList<>();
         for (int i = 0; i < K; i++) {
             results.add(new GMMComponent(i, mukList.get(i), sigmakList.get(i), alphakList.get(i)));
@@ -138,6 +147,7 @@ public class GMM {
             double currentLogLikelihood = GMMLogLikelihood(x, MStepVals);
             double deltaLogLikelihood = currentLogLikelihood - prevLogLikelihood;
             if (deltaLogLikelihood < deltaLogLikelihoodThreshold) {
+                System.out.println("after " + k + " iterations, EM converged.");
                 return MStepVals;
             }
             prevLogLikelihood = currentLogLikelihood;
