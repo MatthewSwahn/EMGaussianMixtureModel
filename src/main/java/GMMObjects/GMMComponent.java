@@ -35,6 +35,9 @@ public class GMMComponent {
         return this.variance;
     }
 
+    public double getSD(){
+        return Math.sqrt(this.variance);
+    }
     public void setWeight(double weight) {
         this.weight = weight;
     }
