@@ -9,6 +9,9 @@
 # Log file
 *.log
 
+# CSV files
+*.csv
+
 # BlueJ files
 *.ctxt
 
