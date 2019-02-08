@@ -1,6 +1,6 @@
 package FuncsAndUtils;
 
-import GMMObjects.GMM;
+import GMMObjects.gaussianMixtureModel;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,13 +25,13 @@ public class ImportUtils {
         return inputData;
     }
 
-    public static GMM GMMFromCSV(String filepath,
-                                 boolean hasHeader,
-                                 ArrayList<Double> estimatedCompCenters,
-                                 int maxIterations,
-                                 double convergenceCriteria) {
+    public static gaussianMixtureModel GMMFromCSV(String filepath,
+                                                  boolean hasHeader,
+                                                  ArrayList<Double> estimatedCompCenters,
+                                                  int maxIterations,
+                                                  double convergenceCriteria) {
         ArrayList<Double> x = DoubleListFromCSV(filepath, hasHeader);
 
-        return new GMM(x, estimatedCompCenters, maxIterations, convergenceCriteria);
+        return new gaussianMixtureModel(x, estimatedCompCenters, maxIterations, convergenceCriteria);
     }
 }
