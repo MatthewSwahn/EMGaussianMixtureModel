@@ -8,15 +8,14 @@ import static FuncsAndUtils.MathFunctions.*;
 
 public class gaussianMixtureModel {
     public ArrayList<gaussianMixtureComponent> components;
+    public final ArrayList<Double> data;
 
-    public gaussianMixtureModel(ArrayList<Double> x,
-                                ArrayList<Double> estimatedCompCenters,
-                                int maxIterations,
-                                double convergenceCriteria) {
-        this.components = EMStep(x,
-                estimatedCompCenters,
-                maxIterations,
-                convergenceCriteria);
+
+    public gaussianMixtureModel(ArrayList<Double> data) {
+        this.data = data;
+    }
+    public void EMGMM(ArrayList<Double> estimatedCompCenters, int maxIterations, double convergenceCriteria){
+        this.components = EMStep(this.data, estimatedCompCenters, maxIterations, convergenceCriteria);
     }
 
     public ArrayList<gaussianMixtureComponent> getComponents() {

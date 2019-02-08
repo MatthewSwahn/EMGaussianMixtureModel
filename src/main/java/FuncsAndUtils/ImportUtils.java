@@ -26,12 +26,9 @@ public class ImportUtils {
     }
 
     public static gaussianMixtureModel GMMFromCSV(String filepath,
-                                                  boolean hasHeader,
-                                                  ArrayList<Double> estimatedCompCenters,
-                                                  int maxIterations,
-                                                  double convergenceCriteria) {
+                                                  boolean hasHeader) {
         ArrayList<Double> x = DoubleListFromCSV(filepath, hasHeader);
 
-        return new gaussianMixtureModel(x, estimatedCompCenters, maxIterations, convergenceCriteria);
+        return new gaussianMixtureModel(x);
     }
 }
