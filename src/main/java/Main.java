@@ -1,4 +1,4 @@
-import GMMObjects.gaussianMixtureModel;
+import GMMObjects.GaussianMixtureModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class Main {
 
         ArrayList<Double> initValues = new ArrayList<>(Arrays.asList(13.4, 27.0));
         //in test file we know we have a N(1,3) with weight 40% and a N(30,4) 60%
-        gaussianMixtureModel Test1 = GMMFromCSV(filePath,
+        GaussianMixtureModel Test1 = GMMFromCSV(filePath,
                 false);
         Test1.EMGMM(initValues, 500, 1e-8);
 

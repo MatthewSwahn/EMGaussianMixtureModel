@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MathFunctions {
+public class ArrayUtilities {
 
     private static final double pi = Math.PI;
     private static final double e = Math.E;

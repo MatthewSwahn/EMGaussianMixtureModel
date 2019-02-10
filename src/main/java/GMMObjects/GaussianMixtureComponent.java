@@ -1,14 +1,14 @@
 package GMMObjects;
 
-import static FuncsAndUtils.MathFunctions.NormalDistPDF;
+import static FuncsAndUtils.ArrayUtilities.NormalDistPDF;
 
-public class gaussianMixtureComponent {
+public class GaussianMixtureComponent {
     private int position;
     private double mean;
     private double variance;
     private double weight;
 
-    public gaussianMixtureComponent(int position, double mean, double variance, double weight) {
+    public GaussianMixtureComponent(int position, double mean, double variance, double weight) {
         this.position = position;
         this.mean = mean;
         this.variance = variance;
