@@ -1,6 +1,6 @@
 package GMMObjects;
 
-import static FuncsAndUtils.ArrayUtilities.NormalDistPDF;
+import static FuncsAndUtils.ArrayUtilities.SingleValueGaussianPDF;
 
 public class GaussianMixtureComponent {
     private int position;
@@ -47,7 +47,7 @@ public class GaussianMixtureComponent {
     }
 
     public double componentPDF(double x) {
-        return NormalDistPDF(x, this.mean, this.variance);
+        return SingleValueGaussianPDF(x, this.mean, this.variance);
     }
 
     public double componentPDFandProb(double x) {
