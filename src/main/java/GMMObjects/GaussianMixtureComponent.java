@@ -4,7 +4,6 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import static FuncsAndUtils.ArrayUtilities.MultiVariateGaussianPDF;
-import static FuncsAndUtils.ArrayUtilities.SingleValueGaussianPDF;
 
 public class GaussianMixtureComponent {
     private int position;
