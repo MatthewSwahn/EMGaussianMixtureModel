@@ -3,6 +3,7 @@ package GMMObjects;
 import org.apache.commons.math3.exception.ConvergenceException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static FuncsAndUtils.ArrayUtilities.*;
 
@@ -23,13 +24,14 @@ public class GaussianMixtureModel {
         return components;
     }
 
-    public ArrayList<ArrayList<Double>> getComponentValues() {
-        ArrayList<ArrayList<Double>> values = new ArrayList<>();
+    // is returning type Object bad practice?
+    public ArrayList<ArrayList<Object>> getComponentValues() {
+        ArrayList<ArrayList<Object>> values = new ArrayList<>();
         for (int i = 0; i < components.size(); i++) {
-            ArrayList<Double> inner = new ArrayList<>();
+            ArrayList<Object> inner = new ArrayList<>();
             inner.add(components.get(i).getWeight());
             inner.add(components.get(i).getMean());
-            inner.add(components.get(i).getSD());
+            inner.add(components.get(i).getVariance());
             values.add(inner);
         }
         return values;
@@ -40,7 +42,7 @@ public class GaussianMixtureModel {
         Assumes K existing weight parameters, K means corresponding to each component,
         and K variances corresponding to each component.
          */
-    private ArrayList<Double> EStepDatum(double xi, ArrayList<GaussianMixtureComponent> components) throws ProbabilityException {
+    private ArrayList<Double> EStepDatum(double[] xi, List<GaussianMixtureComponent> components) throws ProbabilityException {
 
         ArrayList<Double> wkList = new ArrayList<>();
         for (GaussianMixtureComponent GMMk :
@@ -61,15 +63,15 @@ public class GaussianMixtureModel {
         return wkList;
     }
 
-    private ArrayList<ArrayList<Double>> EStep(ArrayList<Double> x, ArrayList<GaussianMixtureComponent> components) {
+    private ArrayList<ArrayList<Double>> EStep(List<double[]> x, List<GaussianMixtureComponent> components) {
         ArrayList<ArrayList<Double>> results = new ArrayList<>();
-        for (Double xi : x) {
+        for (double[] xi : x) {
             results.add(EStepDatum(xi, components));
         }
         return results;
     }
 
-    private ArrayList<GaussianMixtureComponent> MStep(ArrayList<Double> x, ArrayList<ArrayList<Double>> wkList) {
+    private ArrayList<GaussianMixtureComponent> MStep(List<double[]> x, ArrayList<ArrayList<Double>> wkList) {
         int K = wkList.get(0).size();
         int N = x.size();
 
@@ -110,9 +112,9 @@ public class GaussianMixtureModel {
         return results;
     }
 
-    private double GMMLogLikelihood(ArrayList<Double> x, ArrayList<GaussianMixtureComponent> components) {
+    private double GMMLogLikelihood(ArrayList<double[]> x, ArrayList<GaussianMixtureComponent> components) {
         double logLikelihoodSum = 0.0;
-        for (Double xi : x) {
+        for (double[] xi : x) {
             double componentPDFSum = 0.0;
             for (GaussianMixtureComponent comp :
                     components) {
