@@ -1,23 +1,23 @@
 package GMMObjects;
 
 import org.apache.commons.math3.exception.ConvergenceException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import static FuncsAndUtils.ArrayUtilities.*;
 
 public class GaussianMixtureModel {
     public ArrayList<GaussianMixtureComponent> components;
-    public final ArrayList<Double> data;
+    public final ArrayList<double[]> data;
 
 
-    public GaussianMixtureModel(ArrayList<Double> data) {
+    public GaussianMixtureModel(ArrayList<double[]> data) {
         this.data = data;
-    }
-
-    public void EMGMM(ArrayList<Double> estimatedCompCenters, int maxIterations, double convergenceCriteria) {
-        this.components = EMStep(this.data, estimatedCompCenters, maxIterations, convergenceCriteria);
     }
 
     public ArrayList<GaussianMixtureComponent> getComponents() {
@@ -74,37 +74,42 @@ public class GaussianMixtureModel {
     private ArrayList<GaussianMixtureComponent> MStep(List<double[]> x, ArrayList<ArrayList<Double>> wkList) {
         int K = wkList.get(0).size();
         int N = x.size();
+        int d = x.get(0).length;
 
         /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
         collection, NkList (defined above)*/
-        ArrayList<Double> NkList = columnSum(wkList);
+        List<Double> NkList = columnSum(wkList);
 
         // Calculate component probabilities (Alphas)
-        ArrayList<Double> alphakList = divisionScalar(NkList, N);
+        List<Double> alphakList = divisionScalar(NkList, N);
 
-        /* Calculate component means (Mus) = 1/Nk * sum{from i=1 to N) (wkList * xi)
-        this is annoying, remember that wkList is a list of lists*/
-        // can we do a strategy pattern with columnSum and how we get insideSum?
-        // my functions are all static and can't inherit shit
-        ArrayList<Double> insideSumMu = columnSum(wkList);
-        for (int i = 0; i < N; i++) {
-            insideSumMu = sumList(insideSumMu, multiplicationScalar(wkList.get(i), x.get(i)));
-            //side note, we use this strategy forNkList and insideSumMu, can we make this a function?
-        }
-        ArrayList<Double> mukList = divisionByElement(insideSumMu, NkList);
-
-        // SigmaK list, later this is a list of matrices.
-        // There's DEFINITELY a better way to write this
-        // in paper I'm referencing, it looks like they iterate through N records K times, which seems wasteful.
-        ArrayList<Double> insideSumSigma = new ArrayList<>();
+        ArrayList<RealMatrix> mukList = new ArrayList<>();
         for (int j = 0; j < K; j++) {
-            double insideSumVal = 0.0;
+            double[] initMatrixDby1 = new double[d];
+            Arrays.fill(initMatrixDby1, 0.0);
+            RealMatrix componentMean = new Array2DRowRealMatrix(initMatrixDby1);
             for (int i = 0; i < N; i++) {
-                insideSumVal += wkList.get(i).get(j) * Math.pow(x.get(i) - mukList.get(j), 2);
+                double[] insideSum = multiplicationScalar(x.get(i), wkList.get(i).get(j)); // I could've used matrix methods ehre, do we just make X a collection of Matrices?
+                componentMean = componentMean.add(new Array2DRowRealMatrix(insideSum));
+                componentMean = componentMean.scalarMultiply((double) 1 / NkList.get(j));
             }
-            insideSumSigma.add(insideSumVal);
+            mukList.add(componentMean);
         }
-        ArrayList<Double> sigmakList = divisionByElement(insideSumSigma, NkList);
+        System.out.println("check mukList size: " + mukList.size());
+
+        ArrayList<RealMatrix> sigmakList = new ArrayList<>();
+        for (int j = 0; j < K; j++) {
+            RealMatrix insideSumVal = new Array2DRowRealMatrix(new double[d][d]);
+            for (int i = 0; i < N; i++) {
+                RealMatrix xiMinusMu = new Array2DRowRealMatrix(x.get(i)).subtract(mukList.get(j));
+                RealMatrix xiMinusMuT = xiMinusMu.transpose();
+                insideSumVal = insideSumVal.add(xiMinusMu.multiply(xiMinusMuT).scalarMultiply(wkList.get(i).get(j)));
+            }
+            assert NkList.get(j) != 0;
+            insideSumVal.scalarMultiply((double) 1/NkList.get(j));
+            sigmakList.add(insideSumVal);
+        }
+
         ArrayList<GaussianMixtureComponent> results = new ArrayList<>();
         for (int i = 0; i < K; i++) {
             results.add(new GaussianMixtureComponent(i, mukList.get(i), sigmakList.get(i), alphakList.get(i)));
@@ -125,17 +130,17 @@ public class GaussianMixtureModel {
         return logLikelihoodSum;
     }
 
-    private ArrayList<GaussianMixtureComponent> EMStep(ArrayList<Double> x,
-                                                       ArrayList<Double> estimatedCompCenters,
+    private ArrayList<GaussianMixtureComponent> EMStep(ArrayList<double[]> x,
+                                                       ArrayList<double[]> estimatedCompCenters,
                                                        int maxNumberIterations,
                                                        double deltaLogLikelihoodThreshold)
             throws ConvergenceException {
 
         // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
         ArrayList<ArrayList<Double>> EStepVals = new ArrayList<>();
-        for (Double xi :
+        for (double[] xi :
                 x) {
-            EStepVals.add(distToCenterL1(xi, estimatedCompCenters));
+            EStepVals.add((ArrayList<Double>) distToCenterL1(xi, estimatedCompCenters));
         }
 
         ArrayList<GaussianMixtureComponent> MStepVals = MStep(x, EStepVals);
@@ -154,5 +159,9 @@ public class GaussianMixtureModel {
         }
         System.out.println("After " + maxNumberIterations + " iterations there was no convergence.");
         throw new ConvergenceException();
+    }
+
+    public void EMGMM(ArrayList<double[]> estimatedCompCenters, int maxIterations, double convergenceCriteria) {
+        this.components = EMStep(this.data, estimatedCompCenters, maxIterations, convergenceCriteria);
     }
 }
