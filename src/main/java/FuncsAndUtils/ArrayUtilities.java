@@ -1,6 +1,9 @@
 package FuncsAndUtils;
 
-import java.lang.Math;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,13 +13,26 @@ public class ArrayUtilities {
     private static final double pi = Math.PI;
     private static final double e = Math.E;
 
-    public static double NormalDistPDF(double x, double mu, double sigma2) {
+    public static double SingleValueGaussianPDF(double x, double mu, double sigma2) {
         double eExponent = -Math.pow(x - mu, 2) / (2 * sigma2);
         return (1 / Math.sqrt(2 * pi * sigma2)) * Math.pow(e, eExponent);
     }
 
+    // junit test this! especailly the get entry, we should print out the dimensions of the matrix that's created
+    public static double MultiVariateGaussianPDF(double[] x, RealMatrix means, RealMatrix CovMatrix){
+        int d = x.length;
+        RealMatrix xMatrix = new Array2DRowRealMatrix(x);
+        RealMatrix xMinusMeansMatrix = xMatrix.subtract(means);
+        RealMatrix CovInverse = new LUDecomposition(CovMatrix).getSolver().getInverse();
+        double eExponent = -0.5 * (xMinusMeansMatrix.transpose().multiply(CovInverse).multiply(xMinusMeansMatrix))
+                .getEntry(0,0);
+
+        double CovMatrixDeterminant = new LUDecomposition(CovMatrix).getDeterminant();
+        return 1/(Math.pow(2 * pi, d/2) * Math.sqrt(CovMatrixDeterminant) * Math.pow(e, eExponent));
+    }
+
     public static double StandardNormalDistPDF(double x) {
-        return NormalDistPDF(x, 0, 1);
+        return SingleValueGaussianPDF(x, 0, 1);
     }
 
     public static double ProbabilitySum(List<Double> w) {
