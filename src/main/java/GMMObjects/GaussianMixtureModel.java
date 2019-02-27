@@ -3,6 +3,7 @@ package GMMObjects;
 import org.apache.commons.math3.exception.ConvergenceException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static FuncsAndUtils.ArrayUtilities.*;
 
@@ -84,7 +85,7 @@ public class GaussianMixtureModel {
         this is annoying, remember that wkList is a list of lists*/
         // can we do a strategy pattern with columnSum and how we get insideSum?
         // my functions are all static and can't inherit shit
-        ArrayList<Double> insideSumMu = columnSum(wkList);
+        ArrayList<Double> insideSumMu = new ArrayList<>(Collections.nCopies(K, 0.0));
         for (int i = 0; i < N; i++) {
             insideSumMu = sumList(insideSumMu, multiplicationScalar(wkList.get(i), x.get(i)));
             //side note, we use this strategy forNkList and insideSumMu, can we make this a function?
