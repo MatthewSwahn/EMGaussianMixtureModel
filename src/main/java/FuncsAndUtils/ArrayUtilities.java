@@ -54,8 +54,8 @@ public class ArrayUtilities {
         return results;
     }
 
-    public static ArrayList<Double> multiplicationScalar(ArrayList<Double> X, double j) {
-        ArrayList<Double> results = new ArrayList<>();
+    public static List<Double> multiplicationScalar(List<Double> X, double j) {
+        List<Double> results = new ArrayList<>();
         for (double xi :
                 X) {
             results.add(xi * j);
@@ -64,7 +64,16 @@ public class ArrayUtilities {
         return results;
     }
 
-    public static ArrayList<Double> divisionScalar(ArrayList<Double> X, double j) {
+    public static double[] multiplicationScalar(double[] X, double j) {
+        double[] results = new double[X.length];
+        for (int i = 0; i< X.length; i++) {
+            results[i] = X[i] * j;
+        }
+        return results;
+    }
+
+
+    public static List<Double> divisionScalar(List<Double> X, double j) {
         if (j == 0.0) {
             throw new ArithmeticException("divisionScalar failed, scalar cannot be 0.0");
         } else {
@@ -72,7 +81,7 @@ public class ArrayUtilities {
         }
     }
 
-    static ArrayList<Double> multiplicationByElement(ArrayList<Double> X, ArrayList<Double> Y) {
+    static List<Double> multiplicationByElement(List<Double> X, List<Double> Y) {
         assert X.size() == Y.size();
         int length = X.size();
         ArrayList<Double> results = new ArrayList<>();
@@ -82,7 +91,7 @@ public class ArrayUtilities {
         return results;
     }
 
-    public static ArrayList<Double> divisionByElement(ArrayList<Double> numerator, ArrayList<Double> denominator) {
+    public static List<Double> divisionByElement(List<Double> numerator, ArrayList<Double> denominator) {
         assert numerator.size() == denominator.size();
         if (denominator.contains(0.0)) {
             throw new ArithmeticException();
@@ -97,7 +106,7 @@ public class ArrayUtilities {
     }
 
     //idea is that we have a list of lists (inner list is like a row), and we sum over all columns.
-    public static ArrayList<Double> columnSum(ArrayList<ArrayList<Double>> input) {
+    public static List<Double> columnSum(ArrayList<ArrayList<Double>> input) {
         ArrayList<Double> results = new ArrayList<>(Collections.nCopies(input.get(0).size(), 0.0));
         for (ArrayList<Double> i :
                 input) {
@@ -106,7 +115,7 @@ public class ArrayUtilities {
         return results;
     }
 
-    public static ArrayList<Double> L1Norm(ArrayList<Double> inVector) {
+    public static List<Double> L1Norm(List<Double> inVector) {
         double sum = 0.0;
         for (Double vi :
                 inVector) {
@@ -115,12 +124,33 @@ public class ArrayUtilities {
         return divisionScalar(inVector, sum);
     }
 
-    public static ArrayList<Double> distToCenterL1(double x, ArrayList<Double> centers) {
+    public static List<Double> distToCenterL1(double x, List<Double> centers) {
         ArrayList<Double> results = new ArrayList<>();
         for (double ci :
                 centers) {
             results.add(Math.abs(x - ci));
         }
+        return L1Norm(results);
+    }
+
+    /*each center is a coordinate represented as a double[]. This function returns a List of Doubles that represent the
+    normalized distance from a point x to each center.
+     */
+
+    public static double EuclidDist(double[] x, double[] y){
+        assert x.length == y.length;
+        double result = 0.0;
+        for (int i=0; i<x.length; i++){
+            result += Math.pow(x[i] - y[i], 2);
+        }
+        return Math.sqrt(result);
+    }
+    public static List<Double> distToCenterL1(double[] x, List<double[]> centers) {
+        ArrayList<Double> results = new ArrayList<>();
+        for (double[] center: centers) {
+            results.add(EuclidDist(x,center));
+        }
+        // Why do I have to cast here? This is
         return L1Norm(results);
     }
 }
