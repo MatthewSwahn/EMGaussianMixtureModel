@@ -9,15 +9,20 @@ import java.util.ArrayList;
 
 public class ImportUtils {
 
-    public static ArrayList<Double> DoubleListFromCSV(String filepath, boolean hasHeader) {
-        ArrayList<Double> inputData = new ArrayList<>();
+    public static ArrayList<double[]> DoubleListFromCSV(String filepath, boolean hasHeader) {
+        ArrayList<double[]> inputData = new ArrayList<>();
         String line;
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             if (hasHeader) {
                 reader.readLine(); //if hasHeader skip the first line
             }
             while ((line = reader.readLine()) != null) {
-                inputData.add(Double.parseDouble(line));
+                String[] splittedInputLine = line.split(",");
+                int size = splittedInputLine.length;
+                double[] inputDouble = new double[size];
+                for(int i = 0; i<size; i++) {
+                    inputDouble[i] = (Double.parseDouble(splittedInputLine[i]));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -27,7 +32,7 @@ public class ImportUtils {
 
     public static GaussianMixtureModel GMMFromCSV(String filepath,
                                                   boolean hasHeader) {
-        ArrayList<Double> x = DoubleListFromCSV(filepath, hasHeader);
+        ArrayList<double[]> x = DoubleListFromCSV(filepath, hasHeader);
 
         return new GaussianMixtureModel(x);
     }
