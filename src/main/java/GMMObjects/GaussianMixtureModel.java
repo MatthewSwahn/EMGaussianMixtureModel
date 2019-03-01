@@ -151,7 +151,7 @@ public class GaussianMixtureModel {
             double currentLogLikelihood = GMMLogLikelihood(x, MStepVals);
             double deltaLogLikelihood = currentLogLikelihood - prevLogLikelihood;
             if (deltaLogLikelihood < deltaLogLikelihoodThreshold) {
-                System.out.println("after " + k + " iterations, EM converged.");
+                System.out.println("after " + k + 1 + " iterations, EM converged.");
                 return MStepVals;
             }
             prevLogLikelihood = currentLogLikelihood;
