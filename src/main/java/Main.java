@@ -17,7 +17,7 @@ public class Main {
         //in test file we know we have a N(1,3) with weight 40% and a N(30,4) 60%
         GaussianMixtureModel Test1 = GMMFromCSV(filePath,
                 true);
-        Test1.EMGMM(initValues, 500, 1e-8);
+        Test1.fitGMM(initValues, 500, 1e-8);
 
         System.out.println("Components are: " + Test1.getComponentValues());
         System.out.println("Components size: " + Test1.components.size());

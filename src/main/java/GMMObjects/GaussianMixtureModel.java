@@ -1,5 +1,6 @@
 package GMMObjects;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -11,7 +12,7 @@ import java.util.List;
 import static FuncsAndUtils.ArrayUtilities.*;
 
 public class GaussianMixtureModel {
-    public ArrayList<GaussianMixtureComponent> components;
+    public List<GaussianMixtureComponent> components;
     public final ArrayList<double[]> data;
 
 
@@ -19,7 +20,7 @@ public class GaussianMixtureModel {
         this.data = data;
     }
 
-    public ArrayList<GaussianMixtureComponent> getComponents() {
+    public List<GaussianMixtureComponent> getComponents() {
         return components;
     }
 
@@ -41,9 +42,9 @@ public class GaussianMixtureModel {
         Assumes K existing weight parameters, K means corresponding to each component,
         and K variances corresponding to each component.
          */
-    private ArrayList<Double> EStepDatum(double[] xi, List<GaussianMixtureComponent> components) throws ProbabilityException {
+    private List<Double> EStepDatum(double[] xi, List<GaussianMixtureComponent> components) throws RuntimeException {
 
-        ArrayList<Double> wkList = new ArrayList<>();
+        List<Double> wkList = new ArrayList<>();
         for (GaussianMixtureComponent GMMk :
                 components) {
             wkList.add(GMMk.componentPDFandProb(xi));
@@ -56,33 +57,26 @@ public class GaussianMixtureModel {
         for (int i = 0; i < wkList.size(); i++) {
             wkList.set(i, wkList.get(i) / denominator);
             if (wkList.get(i) < 0 || wkList.get(i) > 1) {
-                throw new ProbabilityException(wkList.get(i));
+                throw new RuntimeException("Probability must be between 0 and 1, returned" + wkList.get(i).toString());
             }
         }
         return wkList;
     }
 
-    private ArrayList<ArrayList<Double>> EStep(List<double[]> x, List<GaussianMixtureComponent> components) {
-        ArrayList<ArrayList<Double>> results = new ArrayList<>();
+    private List<List<Double>> EStep(List<double[]> x, List<GaussianMixtureComponent> components) {
+        List<List<Double>> results = new ArrayList<>();
         for (double[] xi : x) {
             results.add(EStepDatum(xi, components));
         }
         return results;
     }
 
-    private ArrayList<GaussianMixtureComponent> MStep(List<double[]> x, ArrayList<ArrayList<Double>> wkList) {
+    private List<RealMatrix> meansMStep(List<double[]> x, List<Double> NkList, List<List<Double>> wkList) {
         int K = wkList.get(0).size();
         int N = x.size();
         int d = x.get(0).length;
 
-        /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
-        collection, NkList (defined above)*/
-        List<Double> NkList = columnSum(wkList);
-
-        // Calculate component probabilities (Alphas)
-        List<Double> alphakList = divisionScalar(NkList, N);
-
-        ArrayList<RealMatrix> mukList = new ArrayList<>();
+        List<RealMatrix> mukList = new ArrayList<>();
         for (int j = 0; j < K; j++) {
             double[] initMatrixDby1 = new double[d];
             Arrays.fill(initMatrixDby1, 0.0);
@@ -95,8 +89,18 @@ public class GaussianMixtureModel {
             mukList.add(componentMean);
         }
         System.out.println("check mukList size: " + mukList.size());
+        return mukList;
+    }
 
-        ArrayList<RealMatrix> sigmakList = new ArrayList<>();
+    private List<RealMatrix> covMStep(List<double[]> x,
+                                      List<Double> NkList,
+                                      List<RealMatrix> mukList,
+                                      List<List<Double>> wkList){
+        int K = NkList.size();
+        int N = x.size();
+        int d = x.get(0).length;
+
+        List<RealMatrix> sigmakList = new ArrayList<>();
         for (int j = 0; j < K; j++) {
             RealMatrix insideSumVal = new Array2DRowRealMatrix(new double[d][d]);
             for (int i = 0; i < N; i++) {
@@ -105,9 +109,29 @@ public class GaussianMixtureModel {
                 insideSumVal = insideSumVal.add(xiMinusMu.multiply(xiMinusMuT).scalarMultiply(wkList.get(i).get(j)));
             }
             assert NkList.get(j) != 0;
-            insideSumVal.scalarMultiply((double) 1/NkList.get(j));
+            insideSumVal.scalarMultiply((double) 1 / NkList.get(j));
             sigmakList.add(insideSumVal);
         }
+        return sigmakList;
+    }
+
+    private List<GaussianMixtureComponent> MStep(List<double[]> x, List<List<Double>> wkList) {
+        int K = wkList.get(0).size();
+        int N = x.size();
+        int d = x.get(0).length;
+
+        /* Create Nk collection. This is weird, wkList is a list of lists, so we add the inner lists to a fresh all 0
+        collection, NkList (defined above)*/
+        List<Double> NkList = columnSum(wkList);
+
+        // Calculate component probabilities (Alphas)
+        List<Double> alphakList = divisionScalar(NkList, N);
+
+        // means calculation
+        List<RealMatrix> mukList = meansMStep(x, NkList, wkList);
+
+        // covariance calculation
+        List<RealMatrix> sigmakList = covMStep(x, NkList, mukList, wkList);
 
         ArrayList<GaussianMixtureComponent> results = new ArrayList<>();
         for (int i = 0; i < K; i++) {
@@ -116,7 +140,8 @@ public class GaussianMixtureModel {
         return results;
     }
 
-    private double GMMLogLikelihood(ArrayList<double[]> x, ArrayList<GaussianMixtureComponent> components) {
+    @VisibleForTesting
+    private double GMMLogLikelihood(List<double[]> x, List<GaussianMixtureComponent> components) {
         double logLikelihoodSum = 0.0;
         for (double[] xi : x) {
             double componentPDFSum = 0.0;
@@ -129,20 +154,20 @@ public class GaussianMixtureModel {
         return logLikelihoodSum;
     }
 
-    private ArrayList<GaussianMixtureComponent> EMStep(ArrayList<double[]> x,
-                                                       ArrayList<double[]> estimatedCompCenters,
+    private List<GaussianMixtureComponent> EMStep(List<double[]> x,
+                                                       List<double[]> estimatedCompCenters,
                                                        int maxNumberIterations,
                                                        double deltaLogLikelihoodThreshold)
             throws ConvergenceException {
 
         // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
-        ArrayList<ArrayList<Double>> EStepVals = new ArrayList<>();
+        List<List<Double>> EStepVals = new ArrayList<>();
         for (double[] xi :
                 x) {
-            EStepVals.add((ArrayList<Double>) distToCenterL1(xi, estimatedCompCenters));
+            EStepVals.add(distToCenterL1(xi, estimatedCompCenters));
         }
 
-        ArrayList<GaussianMixtureComponent> MStepVals = MStep(x, EStepVals);
+        List<GaussianMixtureComponent> MStepVals = MStep(x, EStepVals);
         double prevLogLikelihood = GMMLogLikelihood(x, MStepVals);
 
         for (int k = 0; k < maxNumberIterations - 1; k++) {
@@ -160,7 +185,7 @@ public class GaussianMixtureModel {
         throw new ConvergenceException();
     }
 
-    public void EMGMM(ArrayList<double[]> estimatedCompCenters, int maxIterations, double convergenceCriteria) {
+    public void fitGMM(List<double[]> estimatedCompCenters, int maxIterations, double convergenceCriteria) {
         this.components = EMStep(this.data, estimatedCompCenters, maxIterations, convergenceCriteria);
     }
 }
