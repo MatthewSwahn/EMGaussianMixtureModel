@@ -14,5 +14,5 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-math3
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
-
+    compile 'com.google.guava:guava:27.0.1-jre'
 }

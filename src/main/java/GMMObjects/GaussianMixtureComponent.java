@@ -1,11 +1,14 @@
 package GMMObjects;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import static FuncsAndUtils.ArrayUtilities.MultiVariateGaussianPDF;
 
 public class GaussianMixtureComponent {
+
+    private static final double pi = Math.PI;
+    private static final double e = Math.E;
     private int position;
     private RealMatrix mean;
     private RealMatrix variance;
@@ -18,6 +21,23 @@ public class GaussianMixtureComponent {
         this.weight = weight;
     }
 
+    public double componentPDF(double[] x) {
+        return MultiVariateGaussianPDF(x, this.mean, this.variance);
+    }
+
+    public static double MultiVariateGaussianPDF(double[] x, RealMatrix means, RealMatrix CovMatrix){
+        int d = x.length;
+        RealMatrix xMatrix = new Array2DRowRealMatrix(x);
+        RealMatrix xMinusMeansMatrix = xMatrix.subtract(means);
+        RealMatrix CovInverse = new LUDecomposition(CovMatrix).getSolver().getInverse();
+        double eExponent = -0.5 * (xMinusMeansMatrix.transpose().multiply(CovInverse).multiply(xMinusMeansMatrix))
+                .getEntry(0,0);
+
+        double CovMatrixDeterminant = new LUDecomposition(CovMatrix).getDeterminant();
+        return 1/(Math.pow(2 * pi, d/2) * Math.sqrt(CovMatrixDeterminant) * Math.pow(e, eExponent));
+    }
+
+
     public GaussianMixtureComponent(int position, double[] mean, double[][] variance, double weight) {
         this(position, new Array2DRowRealMatrix(mean), new Array2DRowRealMatrix(variance), weight);
     }
@@ -26,32 +46,16 @@ public class GaussianMixtureComponent {
         return this.position;
     }
 
-    public void setMean(Array2DRowRealMatrix mean) {
-        this.mean = mean;
-    }
-
     public RealMatrix getMean() {
         return this.mean;
-    }
-
-    public void setVariance(Array2DRowRealMatrix variance) {
-        this.variance = variance;
     }
 
     public RealMatrix getVariance() {
         return this.variance;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
     public double getWeight() {
         return this.weight;
-    }
-
-    public double componentPDF(double[] x) {
-        return MultiVariateGaussianPDF(x, this.mean, this.variance);
     }
 
     public double componentPDFandProb(double[] x) {

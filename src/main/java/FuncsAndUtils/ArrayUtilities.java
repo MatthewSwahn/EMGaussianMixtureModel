@@ -10,44 +10,9 @@ import java.util.List;
 
 public class ArrayUtilities {
 
-    private static final double pi = Math.PI;
-    private static final double e = Math.E;
-
-    public static double SingleValueGaussianPDF(double x, double mu, double sigma2) {
-        double eExponent = -Math.pow(x - mu, 2) / (2 * sigma2);
-        return (1 / Math.sqrt(2 * pi * sigma2)) * Math.pow(e, eExponent);
-    }
-
-    // junit test this! especailly the get entry, we should print out the dimensions of the matrix that's created
-    public static double MultiVariateGaussianPDF(double[] x, RealMatrix means, RealMatrix CovMatrix){
-        int d = x.length;
-        RealMatrix xMatrix = new Array2DRowRealMatrix(x);
-        RealMatrix xMinusMeansMatrix = xMatrix.subtract(means);
-        RealMatrix CovInverse = new LUDecomposition(CovMatrix).getSolver().getInverse();
-        double eExponent = -0.5 * (xMinusMeansMatrix.transpose().multiply(CovInverse).multiply(xMinusMeansMatrix))
-                .getEntry(0,0);
-
-        double CovMatrixDeterminant = new LUDecomposition(CovMatrix).getDeterminant();
-        return 1/(Math.pow(2 * pi, d/2) * Math.sqrt(CovMatrixDeterminant) * Math.pow(e, eExponent));
-    }
-
-    public static double StandardNormalDistPDF(double x) {
-        return SingleValueGaussianPDF(x, 0, 1);
-    }
-
-    public static double ProbabilitySum(List<Double> w) {
-        double sum = 0;
-
-        for (Double p :
-                w) {
-            sum += p;
-        }
-        return sum;
-    }
-
-    public static ArrayList<Double> sumList(ArrayList<Double> X, ArrayList<Double> Y) {
+    public static List<Double> sumList(List<Double> X, List<Double> Y) {
         assert X.size() == Y.size();
-        ArrayList<Double> results = new ArrayList<>();
+        List<Double> results = new ArrayList<>();
         for (int i = 0; i < X.size(); i++) {
             results.add(X.get(i) + Y.get(i));
         }
@@ -107,8 +72,8 @@ public class ArrayUtilities {
 
     //idea is that we have a list of lists (inner list is like a row), and we sum over all columns.
     public static List<Double> columnSum(ArrayList<ArrayList<Double>> input) {
-        ArrayList<Double> results = new ArrayList<>(Collections.nCopies(input.get(0).size(), 0.0));
-        for (ArrayList<Double> i :
+        List<Double> results = new ArrayList<>(Collections.nCopies(input.get(0).size(), 0.0));
+        for (List<Double> i :
                 input) {
             results = sumList(results, i);
         }
