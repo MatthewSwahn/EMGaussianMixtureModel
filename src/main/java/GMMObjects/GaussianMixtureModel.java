@@ -95,7 +95,7 @@ public class GaussianMixtureModel {
     private List<RealMatrix> covMStep(List<double[]> x,
                                       List<Double> NkList,
                                       List<RealMatrix> mukList,
-                                      List<List<Double>> wkList){
+                                      List<List<Double>> wkList) {
         int K = NkList.size();
         int N = x.size();
         int d = x.get(0).length;
@@ -155,9 +155,9 @@ public class GaussianMixtureModel {
     }
 
     private List<GaussianMixtureComponent> EMStep(List<double[]> x,
-                                                       List<double[]> estimatedCompCenters,
-                                                       int maxNumberIterations,
-                                                       double deltaLogLikelihoodThreshold)
+                                                  List<double[]> estimatedCompCenters,
+                                                  int maxNumberIterations,
+                                                  double deltaLogLikelihoodThreshold)
             throws ConvergenceException {
 
         // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
