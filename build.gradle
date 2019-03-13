@@ -15,4 +15,11 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-math3
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
     compile 'com.google.guava:guava:27.0.1-jre'
+    
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+test {
+    useJUnitPlatform()
 }
