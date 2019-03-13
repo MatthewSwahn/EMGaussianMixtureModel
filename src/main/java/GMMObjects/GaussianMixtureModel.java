@@ -1,6 +1,5 @@
 package GMMObjects;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -43,7 +42,7 @@ public class GaussianMixtureModel {
         and K variances corresponding to each component.
          */
 
-    public List<Double> EStepDatum(double[] xi, List<GaussianMixtureComponent> components) throws RuntimeException {
+    public List<Double> eStepDatum(double[] xi, List<GaussianMixtureComponent> components) throws RuntimeException {
 
         List<Double> wkList = new ArrayList<>();
         for (GaussianMixtureComponent GMMk :
@@ -64,10 +63,10 @@ public class GaussianMixtureModel {
         return wkList;
     }
 
-    public List<List<Double>> EStep(List<double[]> x, List<GaussianMixtureComponent> components) {
+    public List<List<Double>> eStep(List<double[]> x, List<GaussianMixtureComponent> components) {
         List<List<Double>> results = new ArrayList<>();
         for (double[] xi : x) {
-            results.add(EStepDatum(xi, components));
+            results.add(eStepDatum(xi, components));
         }
         return results;
     }
@@ -115,7 +114,7 @@ public class GaussianMixtureModel {
         return sigmakList;
     }
 
-    public List<GaussianMixtureComponent> MStep(List<double[]> x, List<List<Double>> wkList) {
+    public List<GaussianMixtureComponent> mStep(List<double[]> x, List<List<Double>> wkList) {
         int K = wkList.get(0).size();
         int N = x.size();
         int d = x.get(0).length;
@@ -138,7 +137,7 @@ public class GaussianMixtureModel {
         return results;
     }
 
-    public double GMMLogLikelihood(List<double[]> x, List<GaussianMixtureComponent> components) {
+    public double logLikelihoodGMM(List<double[]> x, List<GaussianMixtureComponent> components) {
         double logLikelihoodSum = 0.0;
         for (double[] xi : x) {
             double componentPDFSum = 0.0;
@@ -151,10 +150,10 @@ public class GaussianMixtureModel {
         return logLikelihoodSum;
     }
 
-    public List<GaussianMixtureComponent> EMStep(List<double[]> x,
-                                                  List<double[]> estimatedCompCenters,
-                                                  int maxNumberIterations,
-                                                  double deltaLogLikelihoodThreshold)
+    public List<GaussianMixtureComponent> emStep(List<double[]> x,
+                                                 List<double[]> estimatedCompCenters,
+                                                 int maxNumberIterations,
+                                                 double deltaLogLikelihoodThreshold)
             throws ConvergenceException {
 
         // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
@@ -164,13 +163,13 @@ public class GaussianMixtureModel {
             EStepVals.add(distToCenterL1(xi, estimatedCompCenters));
         }
 
-        List<GaussianMixtureComponent> MStepVals = MStep(x, EStepVals);
-        double prevLogLikelihood = GMMLogLikelihood(x, MStepVals);
+        List<GaussianMixtureComponent> MStepVals = mStep(x, EStepVals);
+        double prevLogLikelihood = logLikelihoodGMM(x, MStepVals);
 
         for (int k = 0; k < maxNumberIterations - 1; k++) {
-            EStepVals = EStep(x, MStepVals);
-            MStepVals = MStep(x, EStepVals);
-            double currentLogLikelihood = GMMLogLikelihood(x, MStepVals);
+            EStepVals = eStep(x, MStepVals);
+            MStepVals = mStep(x, EStepVals);
+            double currentLogLikelihood = logLikelihoodGMM(x, MStepVals);
             double deltaLogLikelihood = currentLogLikelihood - prevLogLikelihood;
             if (deltaLogLikelihood < deltaLogLikelihoodThreshold) {
                 System.out.println("after " + k + 1 + " iterations, EM converged.");
@@ -183,6 +182,6 @@ public class GaussianMixtureModel {
     }
 
     public void fitGMM(List<double[]> estimatedCompCenters, int maxIterations, double convergenceCriteria) {
-        this.components = EMStep(this.data, estimatedCompCenters, maxIterations, convergenceCriteria);
+        this.components = emStep(this.data, estimatedCompCenters, maxIterations, convergenceCriteria);
     }
 }

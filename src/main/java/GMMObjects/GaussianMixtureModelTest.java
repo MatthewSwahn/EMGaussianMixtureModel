@@ -2,6 +2,8 @@ package GMMObjects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// https://www.baeldung.com/junit-5-gradle
+// https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle
 class GaussianMixtureModelTest {
 
     @org.junit.jupiter.api.Test

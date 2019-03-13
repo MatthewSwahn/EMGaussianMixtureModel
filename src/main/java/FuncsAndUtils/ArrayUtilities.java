@@ -52,7 +52,7 @@ public class ArrayUtilities {
         return results;
     }
 
-    public static List<Double> L1Norm(List<Double> inVector) {
+    public static List<Double> l1Norm(List<Double> inVector) {
         double sum = 0.0;
         for (Double vi :
                 inVector) {
@@ -67,10 +67,10 @@ public class ArrayUtilities {
                 centers) {
             results.add(Math.abs(x - ci));
         }
-        return L1Norm(results);
+        return l1Norm(results);
     }
 
-    public static double EuclidDist(double[] x, double[] y) {
+    public static double euclidDist(double[] x, double[] y) {
         assert x.length == y.length;
         double result = 0.0;
         for (int i = 0; i < x.length; i++) {
@@ -82,8 +82,8 @@ public class ArrayUtilities {
     public static List<Double> distToCenterL1(double[] x, List<double[]> centers) {
         ArrayList<Double> results = new ArrayList<>();
         for (double[] center : centers) {
-            results.add(EuclidDist(x, center));
+            results.add(euclidDist(x, center));
         }
-        return L1Norm(results);
+        return l1Norm(results);
     }
 }

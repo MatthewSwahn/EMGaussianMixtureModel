@@ -7,7 +7,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 public class GaussianMixtureComponent {
 
-    private static final double pi = Math.PI;
+    private static final double PI = Math.PI;
     private static final double e = Math.E;
     private int position;
     private RealMatrix mean;
@@ -22,10 +22,10 @@ public class GaussianMixtureComponent {
     }
 
     public double componentPDF(double[] x) {
-        return MultiVariateGaussianPDF(x, this.mean, this.variance);
+        return multiVariateGaussianPDF(x, this.mean, this.variance);
     }
 
-    public static double MultiVariateGaussianPDF(double[] x, RealMatrix means, RealMatrix CovMatrix){
+    public static double multiVariateGaussianPDF(double[] x, RealMatrix means, RealMatrix CovMatrix){
         int d = x.length;
         RealMatrix xMatrix = new Array2DRowRealMatrix(x);
         RealMatrix xMinusMeansMatrix = xMatrix.subtract(means);
@@ -34,7 +34,7 @@ public class GaussianMixtureComponent {
                 .getEntry(0,0);
 
         double CovMatrixDeterminant = new LUDecomposition(CovMatrix).getDeterminant();
-        return 1/(Math.pow(2 * pi, d/2) * Math.sqrt(CovMatrixDeterminant) * Math.pow(e, eExponent));
+        return 1/(Math.pow(2 * PI, d/2) * Math.sqrt(CovMatrixDeterminant) * Math.pow(e, eExponent));
     }
 
 
