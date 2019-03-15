@@ -12,10 +12,10 @@ import static FuncsAndUtils.ArrayUtilities.*;
 
 public class GaussianMixtureModel {
     public List<GaussianMixtureComponent> components;
-    public final ArrayList<double[]> data;
+    public final List<double[]> data;
 
 
-    public GaussianMixtureModel(ArrayList<double[]> data) {
+    public GaussianMixtureModel(List<double[]> data) {
         this.data = data;
     }
 
