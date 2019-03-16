@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GaussianMixtureComponentTest {
 
     @Test
-    void multiVariateGaussianPDF() {
+    void multivariateGaussianPDFTest() {
         double[] x = new double[]{2.449356520423142, 22.228603905059355};
         RealMatrix mean1 = new Array2DRowRealMatrix(new double[]{2, 5});
         RealMatrix covMatrix1 = new Array2DRowRealMatrix(new double[][]{{1, .5}, {.5, 100}});
