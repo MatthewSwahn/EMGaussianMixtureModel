@@ -30,7 +30,7 @@ public class GaussianMixtureModel {
             ArrayList<Object> inner = new ArrayList<>();
             inner.add(components.get(i).getWeight());
             inner.add(components.get(i).getMean());
-            inner.add(components.get(i).getVariance());
+            inner.add(components.get(i).getCovMatrix());
             values.add(inner);
         }
         return values;
@@ -50,9 +50,10 @@ public class GaussianMixtureModel {
             wkList.add(GMMk.componentPDFandProb(xi));
         }
 
-        double denominator = components.stream()
-                .mapToDouble(o -> o.componentPDFandProb(xi))
-                .sum();
+        double denominator = 0;
+        for (GaussianMixtureComponent component: components){
+            denominator += component.componentPDFandProb(xi);
+        }
 
         for (int i = 0; i < wkList.size(); i++) {
             wkList.set(i, wkList.get(i) / denominator);
