@@ -1,7 +1,11 @@
 package GMMObjects;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +72,24 @@ class GaussianMixtureModelTest {
 
     @Test
     void meansMStep() {
+        // values to feed into meansMStep method
+        List<List<Double>> myWkWeights = Arrays.asList(
+                Arrays.asList(0.98630233, 0.01369767),
+                Arrays.asList(0.93771556, 0.06228444),
+                Arrays.asList(0.62419835, 0.37580165),
+                Arrays.asList(0.98378211, 0.01621789),
+                Arrays.asList(0.9500608, 0.0499392));
+        List<Double> myNkList = Arrays.asList(1.4, 3.6);
+        List<double[]> xvals = x.subList(0,5);
+
+        //expected values
+        double[] expected1 = new double[] { 15.05919768, 24.53052035};
+        double[] expected2 = new double[] {0.32795829, 0.25550444};
+
+        List<RealMatrix> meansMStepActual = myGMM.meansMStep(xvals,myNkList, myWkWeights);
+        // there's probably an easier way to do this
+        assertArrayEquals(expected1, meansMStepActual.get(0).getColumn(0),1e-8);
+        assertArrayEquals(expected2, meansMStepActual.get(1).getColumn(0),1e-8);
     }
 
     @Test
