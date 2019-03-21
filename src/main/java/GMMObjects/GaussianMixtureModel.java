@@ -85,8 +85,8 @@ public class GaussianMixtureModel {
             for (int i = 0; i < N; i++) {
                 double[] insideSum = multiplicationScalar(x.get(i), wkList.get(i).get(j));
                 componentMean = componentMean.add(new Array2DRowRealMatrix(insideSum));
-                componentMean = componentMean.scalarMultiply((double) 1 / NkList.get(j));
             }
+            componentMean = componentMean.scalarMultiply((double) 1 / NkList.get(j));
             mukList.add(componentMean);
         }
         return mukList;
