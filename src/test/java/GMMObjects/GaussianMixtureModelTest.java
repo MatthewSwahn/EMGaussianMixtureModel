@@ -36,6 +36,13 @@ class GaussianMixtureModelTest {
             new double[]{7.505823961710833, 8.910900297017099});
     private final GaussianMixtureModel myGMM = new GaussianMixtureModel(x);
 
+    private final List<List<Double>> myWkWeights = Arrays.asList(
+            Arrays.asList(0.98630233, 0.01369767),
+            Arrays.asList(0.93771556, 0.06228444),
+            Arrays.asList(0.62419835, 0.37580165),
+            Arrays.asList(0.98378211, 0.01621789),
+            Arrays.asList(0.9500608, 0.0499392));
+
     // put stuff here
     @BeforeClass
     public static void init() {
@@ -73,27 +80,38 @@ class GaussianMixtureModelTest {
     @Test
     void meansMStep() {
         // values to feed into meansMStep method
-        List<List<Double>> myWkWeights = Arrays.asList(
-                Arrays.asList(0.98630233, 0.01369767),
-                Arrays.asList(0.93771556, 0.06228444),
-                Arrays.asList(0.62419835, 0.37580165),
-                Arrays.asList(0.98378211, 0.01621789),
-                Arrays.asList(0.9500608, 0.0499392));
         List<Double> myNkList = Arrays.asList(1.4, 3.6);
-        List<double[]> xvals = x.subList(0,5);
+        List<double[]> xvals = x.subList(0, 5);
 
         //expected values
-        double[] expected1 = new double[] { 15.05919768, 24.53052035};
-        double[] expected2 = new double[] {0.32795829, 0.25550444};
+        double[] expected1 = new double[]{15.05919768, 24.53052035};
+        double[] expected2 = new double[]{0.32795829, 0.25550444};
 
-        List<RealMatrix> meansMStepActual = myGMM.meansMStep(xvals,myNkList, myWkWeights);
+        List<RealMatrix> meansMStepActual = myGMM.meansMStep(xvals, myNkList, myWkWeights);
         // there's probably an easier way to do this
-        assertArrayEquals(expected1, meansMStepActual.get(0).getColumn(0),1e-8);
-        assertArrayEquals(expected2, meansMStepActual.get(1).getColumn(0),1e-8);
+        assertArrayEquals(expected1, meansMStepActual.get(0).getColumn(0), 1e-8);
+        assertArrayEquals(expected2, meansMStepActual.get(1).getColumn(0), 1e-8);
     }
 
     @Test
     void covMStep() {
+        // values to feed into covsMStep method
+        List<Double> myNkList = Arrays.asList(1.4, 3.6);
+        List<double[]> xvals = x.subList(0, 5);
+        List<RealMatrix> means = Arrays.asList(new Array2DRowRealMatrix(new double[]{15.05919768, 24.53052035}),
+                new Array2DRowRealMatrix(new double[]{0.32795829, 0.25550444}));
+
+        //expected values
+        double[][] expected1 = new double[][]{{365.90583921, 553.95479554},
+                {553.95479554, 1145.36567775}};
+        double[][] expected2 = new double[][]{{1.72020284, 1.73820564},
+                {1.73820564, 3.50133802}};
+
+        List<RealMatrix> covMStepActual = myGMM.covMStep(xvals, myNkList, means, myWkWeights);
+        assertArrayEquals(expected1[0], covMStepActual.get(0).getColumn(0), 1e-6);
+        assertArrayEquals(expected1[1], covMStepActual.get(0).getColumn(1), 1e-6);
+        assertArrayEquals(expected2[0], covMStepActual.get(1).getColumn(0), 1e-6);
+        assertArrayEquals(expected2[1], covMStepActual.get(1).getColumn(1), 1e-6);
     }
 
     @Test
@@ -102,7 +120,6 @@ class GaussianMixtureModelTest {
 
     @Test
     void logLikelihoodGMMTest() {
-        System.out.println("myGMM components: " + myGMM.components);
         double[] xval = x.get(0);
         List<double[]> xvalArrayList = Arrays.asList(xval);
         double[] mean1 = new double[]{2, 5};
