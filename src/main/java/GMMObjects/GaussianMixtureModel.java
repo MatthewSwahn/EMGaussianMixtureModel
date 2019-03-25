@@ -109,7 +109,7 @@ public class GaussianMixtureModel {
                 insideSumVal = insideSumVal.add(xiMinusMu.multiply(xiMinusMuT).scalarMultiply(wkList.get(i).get(j)));
             }
             assert NkList.get(j) != 0;
-            insideSumVal.scalarMultiply((double) 1 / NkList.get(j));
+            insideSumVal = insideSumVal.scalarMultiply(1 / NkList.get(j));
             sigmakList.add(insideSumVal);
         }
         return sigmakList;
