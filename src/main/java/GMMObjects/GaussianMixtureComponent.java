@@ -38,10 +38,6 @@ public class GaussianMixtureComponent {
         this(position, new Array2DRowRealMatrix(mean), new Array2DRowRealMatrix(variance), weight);
     }
 
-    public int getPosition() {
-        return this.position;
-    }
-
     public RealMatrix getMean() {
         return this.mean;
     }
