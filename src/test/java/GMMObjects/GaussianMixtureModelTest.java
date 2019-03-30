@@ -1,17 +1,16 @@
 package GMMObjects;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // https://www.baeldung.com/junit-5-gradle
 // https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle
@@ -78,7 +77,7 @@ class GaussianMixtureModelTest {
     }
 
     @Test
-    void meansMStep() {
+    void meansMStepTest() {
         // values to feed into meansMStep method
         List<Double> myNkList = Arrays.asList(1.4, 3.6);
         List<double[]> xvals = x.subList(0, 5);
@@ -94,7 +93,7 @@ class GaussianMixtureModelTest {
     }
 
     @Test
-    void covMStep() {
+    void covMStepTest() {
         // values to feed into covsMStep method
         List<Double> myNkList = Arrays.asList(1.4, 3.6);
         List<double[]> xvals = x.subList(0, 5);
