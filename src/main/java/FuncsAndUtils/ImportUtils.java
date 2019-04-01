@@ -35,9 +35,6 @@ public class ImportUtils {
     public static GaussianMixtureModel GMMFromCSV(String filepath,
                                                   boolean hasHeader) {
         ArrayList<double[]> x = DoubleListFromCSV(filepath, hasHeader);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(x.get(i));
-        }
         return new GaussianMixtureModel(x);
     }
 }
