@@ -10,7 +10,7 @@ This is the Java implementation of the Expectation Maximization (EM) algorithm t
 4) After EM convergence, show components using the gaussianMixtureModel method "getComponenetValues()":<br>`System.out.println("Components are: " + Test1.getComponentValues());`
 
 ## Main classes:
-1) gaussianMixtureComponent - this class represents a single component. Each GMMComponent has a position, mean, variance, and weight. So far the only useful public method here is componentPDFandProb, which returns a component pdf value (weight * N(mean, variance).
+1) gaussianMixtureComponent - this class represents a single component. Each GMMComponent has a position, mean, variance, and weight. So far the only useful public method here is componentPDFandProb, which returns a component pdf value (weight * N(mean, variance)).
 
 2) gaussianMixtureModel - this class actually does the EM algorithm to produce the mean, variance, and weights for K components. Input is the data (as of 02/08/19, 1 dimensional data), the number of components, and the estimated center for each component. It's fine if the component centers aren't accurate, but better estimations would yield faster convergence. Recommended to set the centers as the centroids of a k-means algorithm, where k is both the number of k-means clusters and number of components.
 
