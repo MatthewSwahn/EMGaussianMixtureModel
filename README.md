@@ -6,7 +6,7 @@ This is the Java implementation of the Expectation Maximization (EM) algorithm t
 1) Create a filepath string to your data (as of 4/10/19 must be csv):<br>`String filePathBase = new File("").getAbsolutePath();`<br>
 `String filePath = filePathBase.concat("/src/main/resources/multigmm-data.csv");`
 2) Initialize an ArrayList that contains estimates for the means of the GMM components. Centroids for K-nearest neighbors are best but multimodal estimates are fine.<br>`List initValues = new ArrayList<>(Arrays.asList(13.4, 27.0));`
-3) Create GaussianMixtureModel class by using the GMMFromCSV function. the gaussianMixtureModel method EMGMM, which contains the initialization for the component means, max number of iterations, and the threshold for EM convergence.<br>`GaussianMixtureModel Test1 = GMMFromCSV(filePath, true);`<br>`Test1.fitGMM(initValues, 500, 1e-8); // here 500 is the max number of iterations and the threshold is 1e-8`
+3) Create GaussianMixtureModel class by using the GMMFromCSV function. the gaussianMixtureModel method EMGMM, which contains the initialization for the component means, max number of iterations, and the threshold for EM convergence.<br>`GaussianMixtureModel Test1 = createGMMFromCSV(filePath, true);`<br>`Test1.fitGMM(initValues, 500, 1e-8); // here 500 is the max number of iterations and the threshold is 1e-8`
 Alternatively, if your data already exists as a List of double[] you can instantiate the GaussianMixtureModel using the constructor:<br>
 `GaussianMixtureModel Test1 = new GaussianMixtureModel(myListOfArrayDouble);`
 
