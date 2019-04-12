@@ -20,6 +20,6 @@ public class Main {
         Test1.fitGMM(initValues, 500, 1e-8);
 
         System.out.println("Components are: " + Test1.getComponentValues());
-        System.out.println("Components size: " + Test1.components.size());
+        System.out.println("Components size: " + Test1.getComponentValues().size());
     }
 }
