@@ -1,6 +1,5 @@
 import GMMObjects.GaussianMixtureModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,8 +7,7 @@ import static FuncsAndUtils.ImportUtils.createGMMFromCSV;
 
 public class Main {
     public static void main(String[] args) {
-        String filePathBase = new File("").getAbsolutePath();
-        String filePath = filePathBase.concat("/src/main/resources/multigmm-data.csv");
+        String filePath = "src/main/resources/multigmm-data.csv";
 
         ArrayList<double[]> initValues = new ArrayList<>(Arrays.asList(
                 new double[]{1.2, 3.14}, new double[]{10.5, 27.0}));
