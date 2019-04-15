@@ -1,6 +1,8 @@
 # EMGaussianMixtureModel
 This is the Java implementation of the Expectation Maximization (EM) algorithm to fit maximum likelihood parameters for a Gaussian Mixture Model.
 
+To reference how this process works I followed these notes: https://www.ics.uci.edu/~smyth/courses/cs274/notes/EMnotes.pdf
+
 ## Usage example:
  To use the package:
 1) Create a filepath string to your data (as of 4/10/19 must be csv):<br>`String filePath = "src/main/resources/multigmm-data.csv";`
