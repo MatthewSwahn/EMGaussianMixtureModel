@@ -62,7 +62,7 @@ public class ArrayUtilities {
     }
 
     public static List<Double> distToCenterL1(double x, List<Double> centers) {
-        ArrayList<Double> results = new ArrayList<>();
+        List<Double> results = new ArrayList<>();
         for (double ci :
                 centers) {
             results.add(Math.abs(x - ci));
@@ -80,7 +80,7 @@ public class ArrayUtilities {
     }
 
     public static List<Double> distToCenterL1(double[] x, List<double[]> centers) {
-        ArrayList<Double> results = new ArrayList<>();
+        List<Double> results = new ArrayList<>();
         for (double[] center : centers) {
             results.add(euclidDist(x, center));
         }

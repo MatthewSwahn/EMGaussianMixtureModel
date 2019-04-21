@@ -24,10 +24,10 @@ public class GaussianMixtureModel {
     }
 
     // is returning type Object bad practice?
-    public List<ArrayList<Object>> getComponentValues() {
-        List<ArrayList<Object>> values = new ArrayList<>();
+    public List<List<Object>> getComponentValues() {
+        List<List<Object>> values = new ArrayList<>();
         for (int i = 0; i < components.size(); i++) {
-            ArrayList<Object> inner = new ArrayList<>();
+            List<Object> inner = new ArrayList<>();
             inner.add(components.get(i).getWeight());
             inner.add(components.get(i).getMean());
             inner.add(components.get(i).getCovMatrix());
