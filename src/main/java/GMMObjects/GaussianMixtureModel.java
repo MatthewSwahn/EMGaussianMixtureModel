@@ -107,7 +107,10 @@ public class GaussianMixtureModel {
                 RealMatrix xiMinusMuT = xiMinusMu.transpose();
                 insideSumVal = insideSumVal.add(xiMinusMu.multiply(xiMinusMuT).scalarMultiply(wkList.get(i).get(j)));
             }
-            assert NkList.get(j) != 0;
+            if (NkList.get(j) == 0) {
+                throw new RuntimeException("Error in covariance maximization, Nk is equal to zero. " +
+                        "Found in component " + j);
+            }
             insideSumVal = insideSumVal.scalarMultiply(1 / NkList.get(j));
             sigmakList.add(insideSumVal);
         }
