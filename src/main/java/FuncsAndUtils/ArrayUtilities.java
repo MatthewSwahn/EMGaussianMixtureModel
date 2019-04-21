@@ -7,6 +7,9 @@ import java.util.List;
 public class ArrayUtilities {
 
     public static List<Double> sumList(List<Double> X, List<Double> Y) {
+        if(X == null || Y == null){
+            throw new NullPointerException("one of the submitted Lists is null, cannot add Lists");
+        }
         assert X.size() == Y.size();
         List<Double> results = new ArrayList<>();
         for (int i = 0; i < X.size(); i++) {
