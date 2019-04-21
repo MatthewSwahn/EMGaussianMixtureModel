@@ -23,9 +23,8 @@ public class GaussianMixtureModel {
         return components;
     }
 
-    // is returning type Object bad practice?
-    public List<List<Object>> getComponentValues() {
-        List<List<Object>> values = new ArrayList<>();
+    public List<List<?>> getComponentValues() {
+        List<List<?>> values = new ArrayList<>();
         for (int i = 0; i < components.size(); i++) {
             List<Object> inner = new ArrayList<>();
             inner.add(components.get(i).getWeight());
@@ -51,7 +50,7 @@ public class GaussianMixtureModel {
         }
 
         double denominator = 0;
-        for (GaussianMixtureComponent component: components){
+        for (GaussianMixtureComponent component : components) {
             denominator += component.componentPDFandProb(xi);
         }
 
@@ -152,9 +151,9 @@ public class GaussianMixtureModel {
     }
 
     private List<GaussianMixtureComponent> emStep(List<double[]> x,
-                                                 List<double[]> estimatedCompCenters,
-                                                 int maxNumberIterations,
-                                                 double deltaLogLikelihoodThreshold)
+                                                  List<double[]> estimatedCompCenters,
+                                                  int maxNumberIterations,
+                                                  double deltaLogLikelihoodThreshold)
             throws ConvergenceException {
 
         // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
@@ -173,7 +172,7 @@ public class GaussianMixtureModel {
             double currentLogLikelihood = logLikelihoodGMM(x, MStepVals);
             double deltaLogLikelihood = currentLogLikelihood - prevLogLikelihood;
             if (deltaLogLikelihood < deltaLogLikelihoodThreshold) {
-                System.out.println("after " + (k+1)  + " iterations, EM converged.");
+                System.out.println("after " + (k + 1) + " iterations, EM converged.");
                 return MStepVals;
             }
             prevLogLikelihood = currentLogLikelihood;
