@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ImportUtils {
 
-    public static ArrayList<double[]> DoubleListFromCSV(String filepath, boolean hasHeader) {
+    public static ArrayList<double[]> doubleListFromCSV(String filepath, boolean hasHeader) {
         ArrayList<double[]> inputData = new ArrayList<>();
         String line;
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
@@ -32,12 +32,9 @@ public class ImportUtils {
         return inputData;
     }
 
-    public static GaussianMixtureModel GMMFromCSV(String filepath,
-                                                  boolean hasHeader) {
-        ArrayList<double[]> x = DoubleListFromCSV(filepath, hasHeader);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(x.get(i));
-        }
+    public static GaussianMixtureModel createGMMFromCSV(String filepath,
+                                                        boolean hasHeader) {
+        ArrayList<double[]> x = doubleListFromCSV(filepath, hasHeader);
         return new GaussianMixtureModel(x);
     }
 }

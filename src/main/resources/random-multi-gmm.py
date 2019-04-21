@@ -2,7 +2,7 @@ import numpy as np
 import random
 import pandas as pd
 
-directory = 'C:/Users/Matt/Desktop/'
+directory = 'C:\\Users\\matthew.swahn\\Desktop\\'
 
 
 def pull_multiggm_sample(n, components):
