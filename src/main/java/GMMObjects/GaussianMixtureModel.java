@@ -41,17 +41,17 @@ public class GaussianMixtureModel {
         and K variances corresponding to each component.
          */
 
-    private List<Double> eStepDatum(double[] xi, List<GaussianMixtureComponent> components) throws RuntimeException {
+    private List<Double> eStepDatum(double[] datum, List<GaussianMixtureComponent> components) throws RuntimeException {
 
         List<Double> wkList = new ArrayList<>();
         for (GaussianMixtureComponent GMMk :
                 components) {
-            wkList.add(GMMk.componentPDFandProb(xi));
+            wkList.add(GMMk.componentPDFandProb(datum));
         }
 
         double denominator = 0;
         for (GaussianMixtureComponent component : components) {
-            denominator += component.componentPDFandProb(xi);
+            denominator += component.componentPDFandProb(datum);
         }
 
         for (int i = 0; i < wkList.size(); i++) {
@@ -63,18 +63,18 @@ public class GaussianMixtureModel {
         return wkList;
     }
 
-    private List<List<Double>> eStep(List<double[]> x, List<GaussianMixtureComponent> components) {
+    private List<List<Double>> eStep(List<double[]> data, List<GaussianMixtureComponent> components) {
         List<List<Double>> results = new ArrayList<>();
-        for (double[] xi : x) {
-            results.add(eStepDatum(xi, components));
+        for (double[] datum : data) {
+            results.add(eStepDatum(datum, components));
         }
         return results;
     }
 
-    private List<RealMatrix> meansMStep(List<double[]> x, List<Double> NkList, List<List<Double>> wkList) {
+    private List<RealMatrix> meansMStep(List<double[]> data, List<Double> NkList, List<List<Double>> wkList) {
         int K = wkList.get(0).size();
-        int N = x.size();
-        int d = x.get(0).length;
+        int N = data.size();
+        int d = data.get(0).length;
 
         List<RealMatrix> mukList = new ArrayList<>();
         for (int j = 0; j < K; j++) {
@@ -82,7 +82,7 @@ public class GaussianMixtureModel {
             Arrays.fill(initMatrixDby1, 0.0);
             RealMatrix componentMean = new Array2DRowRealMatrix(initMatrixDby1);
             for (int i = 0; i < N; i++) {
-                double[] insideSum = multiplicationScalar(x.get(i), wkList.get(i).get(j));
+                double[] insideSum = multiplicationScalar(data.get(i), wkList.get(i).get(j));
                 componentMean = componentMean.add(new Array2DRowRealMatrix(insideSum));
             }
             componentMean = componentMean.scalarMultiply((double) 1 / NkList.get(j));
@@ -91,19 +91,19 @@ public class GaussianMixtureModel {
         return mukList;
     }
 
-    private List<RealMatrix> covMStep(List<double[]> x,
+    private List<RealMatrix> covMStep(List<double[]> data,
                                       List<Double> NkList,
                                       List<RealMatrix> mukList,
                                       List<List<Double>> wkList) {
         int K = NkList.size();
-        int N = x.size();
-        int d = x.get(0).length;
+        int N = data.size();
+        int d = data.get(0).length;
 
         List<RealMatrix> sigmakList = new ArrayList<>();
         for (int j = 0; j < K; j++) {
             RealMatrix insideSumVal = new Array2DRowRealMatrix(new double[d][d]);
             for (int i = 0; i < N; i++) {
-                RealMatrix xiMinusMu = new Array2DRowRealMatrix(x.get(i)).subtract(mukList.get(j));
+                RealMatrix xiMinusMu = new Array2DRowRealMatrix(data.get(i)).subtract(mukList.get(j));
                 RealMatrix xiMinusMuT = xiMinusMu.transpose();
                 insideSumVal = insideSumVal.add(xiMinusMu.multiply(xiMinusMuT).scalarMultiply(wkList.get(i).get(j)));
             }
@@ -114,10 +114,10 @@ public class GaussianMixtureModel {
         return sigmakList;
     }
 
-    private List<GaussianMixtureComponent> mStep(List<double[]> x, List<List<Double>> wkList) {
+    private List<GaussianMixtureComponent> mStep(List<double[]> data, List<List<Double>> wkList) {
         int K = wkList.get(0).size();
-        int N = x.size();
-        int d = x.get(0).length;
+        int N = data.size();
+        int d = data.get(0).length;
 
         List<Double> NkList = columnSum(wkList);
 
@@ -125,10 +125,10 @@ public class GaussianMixtureModel {
         List<Double> alphakList = divisionScalar(NkList, N);
 
         // means calculation
-        List<RealMatrix> mukList = meansMStep(x, NkList, wkList);
+        List<RealMatrix> mukList = meansMStep(data, NkList, wkList);
 
         // covariance calculation
-        List<RealMatrix> sigmakList = covMStep(x, NkList, mukList, wkList);
+        List<RealMatrix> sigmakList = covMStep(data, NkList, mukList, wkList);
 
         List<GaussianMixtureComponent> results = new ArrayList<>();
         for (int i = 0; i < K; i++) {
@@ -137,20 +137,20 @@ public class GaussianMixtureModel {
         return results;
     }
 
-    private double logLikelihoodGMM(List<double[]> x, List<GaussianMixtureComponent> components) {
+    private double logLikelihoodGMM(List<double[]> data, List<GaussianMixtureComponent> components) {
         double logLikelihoodSum = 0.0;
-        for (double[] xi : x) {
+        for (double[] datum : data) {
             double componentPDFSum = 0.0;
             for (GaussianMixtureComponent comp :
                     components) {
-                componentPDFSum += comp.componentPDFandProb(xi);
+                componentPDFSum += comp.componentPDFandProb(datum);
             }
             logLikelihoodSum += Math.log(componentPDFSum);
         }
         return logLikelihoodSum;
     }
 
-    private List<GaussianMixtureComponent> emStep(List<double[]> x,
+    private List<GaussianMixtureComponent> emStep(List<double[]> data,
                                                   List<double[]> estimatedCompCenters,
                                                   int maxNumberIterations,
                                                   double deltaLogLikelihoodThreshold)
@@ -158,18 +158,18 @@ public class GaussianMixtureModel {
 
         // initialize wkList, weights are the L1 norm of the distance of a point xi to each estimated component center
         List<List<Double>> EStepVals = new ArrayList<>();
-        for (double[] xi :
-                x) {
-            EStepVals.add(distToCenterL1(xi, estimatedCompCenters));
+        for (double[] datum :
+                data) {
+            EStepVals.add(distToCenterL1(datum, estimatedCompCenters));
         }
 
-        List<GaussianMixtureComponent> MStepVals = mStep(x, EStepVals);
-        double prevLogLikelihood = logLikelihoodGMM(x, MStepVals);
+        List<GaussianMixtureComponent> MStepVals = mStep(data, EStepVals);
+        double prevLogLikelihood = logLikelihoodGMM(data, MStepVals);
 
         for (int k = 0; k < maxNumberIterations - 1; k++) {
-            EStepVals = eStep(x, MStepVals);
-            MStepVals = mStep(x, EStepVals);
-            double currentLogLikelihood = logLikelihoodGMM(x, MStepVals);
+            EStepVals = eStep(data, MStepVals);
+            MStepVals = mStep(data, EStepVals);
+            double currentLogLikelihood = logLikelihoodGMM(data, MStepVals);
             double deltaLogLikelihood = currentLogLikelihood - prevLogLikelihood;
             if (deltaLogLikelihood < deltaLogLikelihoodThreshold) {
                 System.out.println("after " + (k + 1) + " iterations, EM converged.");
