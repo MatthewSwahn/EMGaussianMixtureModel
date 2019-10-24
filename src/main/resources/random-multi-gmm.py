@@ -1,8 +1,10 @@
 import numpy as np
 import random
 import pandas as pd
+from pathlib import Path
+import os
 
-directory = 'C:\\Users\\matthew.swahn\\Desktop\\'
+cwd = Path(os.getcwd())
 
 
 def pull_multiggm_sample(n, components):
@@ -29,4 +31,4 @@ test_samp = pull_multiggm_sample(15000,
                                  [(0.4, mean1, cov1), (0.6, mean2, cov2)])
 
 print(test_samp[:15])
-pd.DataFrame(test_samp).to_csv(directory + 'multigmm-data.csv', index=False)
+pd.DataFrame(test_samp).to_csv(cwd/'multigmm-data.csv', index=False)
