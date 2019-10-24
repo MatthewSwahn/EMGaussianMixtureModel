@@ -6,7 +6,7 @@ To reference how this process works I followed these notes: https://www.ics.uci.
 ## Usage example:
  To use the package:
 1) Create a filepath string to your data (as of 4/10/19 must be csv):<br>`String filePath = "src/main/resources/multigmm-data.csv";`
-2) Initialize an ArrayList that contains estimates for the means of the GMM components. Centroids for K-nearest neighbors are best but multimodal estimates are fine.<br>`List initValues = new ArrayList<>(Arrays.asList(13.4, 27.0));`
+2) Initialize an ArrayList that contains estimates for the means of the GMM components. Centroids for K-nearest neighbors are best but multimodal estimates are fine.<br>`List initValues = new ArrayList<>(Arrays.asList(new double[]{1.2, 3.14}, new double[]{10.5, 27.0}));`
 3) Create GaussianMixtureModel class by using the GMMFromCSV function. the gaussianMixtureModel method EMGMM, which contains the initialization for the component means, max number of iterations, and the threshold for EM convergence.<br>`GaussianMixtureModel Test1 = createGMMFromCSV(filePath, true);`<br>`Test1.fitGMM(initValues, 500, 1e-8); // here 500 is the max number of iterations and the convergence threshold is 1e-8`
 Alternatively, if your data already exists as a List of double[] you can instantiate the GaussianMixtureModel using the constructor:<br>
 `GaussianMixtureModel Test1 = new GaussianMixtureModel(myListOfArrayDouble);`
