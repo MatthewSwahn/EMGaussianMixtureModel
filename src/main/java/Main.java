@@ -16,11 +16,11 @@ public class Main {
         //in muligmm-data test file, we have
         // component 1: 40% with mean = [2, 5] and cov = [[1, .5], [.5, 100]]
         // component 2: 60% with mean = [6, 9] and cov = [[5, 3], [3, 40]]
-        GaussianMixtureModel Test1 = createGMMFromCSV(filePath,
+        GaussianMixtureModel myGMMFromCSVData = createGMMFromCSV(filePath,
                 true);
-        Test1.fitGMM(initValues, 500, 1e-8);
+        myGMMFromCSVData.fitGMM(initValues, 500, 1e-8);
 
-        System.out.println("Components are: " + Test1.getComponentValues());
-        System.out.println("Components size: " + Test1.getComponentValues().size());
+        System.out.println("Components are: " + myGMMFromCSVData.getComponentValues());
+        System.out.println("Components size: " + myGMMFromCSVData.getComponentValues().size());
     }
 }
